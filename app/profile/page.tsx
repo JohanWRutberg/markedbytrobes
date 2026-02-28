@@ -92,7 +92,7 @@ export default function ProfilePage() {
           text: data.error || "Kunde inte ändra lösenord",
         });
       }
-    } catch (error) {
+    } catch {
       setMessage({
         type: "error",
         text: "Ett fel uppstod",
@@ -141,7 +141,7 @@ export default function ProfilePage() {
           text: data.error || "Kunde inte ändra e-postadress",
         });
       }
-    } catch (error) {
+    } catch {
       setMessage({
         type: "error",
         text: "Ett fel uppstod",
