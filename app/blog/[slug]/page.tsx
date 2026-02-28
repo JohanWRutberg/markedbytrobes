@@ -203,8 +203,8 @@ export default async function PostPage({ params }: PostPageProps) {
               <h2 className="font-cinzel text-3xl font-bold text-navy dark:text-cream">
                 Featured Books
               </h2>
-              {post.books.map((book, index) => (
-                <BookCard key={book.id} book={book} index={index} />
+              {post.books.map((book) => (
+                <BookCard key={book.id} book={book} />
               ))}
             </div>
           )}

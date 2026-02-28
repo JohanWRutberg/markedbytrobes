@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { v2 as cloudinary } from "cloudinary";
+import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -48,20 +48,23 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
 
     // Upload to Cloudinary
-    const uploadResponse = await new Promise<any>((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream(
-          {
-            folder: "markedbytrobes",
-            resource_type: "image",
-          },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          },
-        )
-        .end(buffer);
-    });
+    const uploadResponse = await new Promise<UploadApiResponse>(
+      (resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder: "markedbytrobes",
+              resource_type: "image",
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else if (result) resolve(result);
+              else reject(new Error("Upload failed: No result returned"));
+            },
+          )
+          .end(buffer);
+      },
+    );
 
     // Return Cloudinary URL
     const url = uploadResponse.secure_url;

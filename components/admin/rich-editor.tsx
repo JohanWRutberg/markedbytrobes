@@ -50,7 +50,17 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
   const [urlInput, setUrlInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
-  const [unsplashImages, setUnsplashImages] = useState<any[]>([]);
+  const [unsplashImages, setUnsplashImages] = useState<
+    Array<{
+      id: string;
+      url: string;
+      thumb: string;
+      description: string;
+      photographer: string;
+      photographerUrl: string;
+      downloadUrl: string;
+    }>
+  >([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editor = useEditor({
     extensions: [

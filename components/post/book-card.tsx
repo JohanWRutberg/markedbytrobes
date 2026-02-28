@@ -19,10 +19,9 @@ interface Book {
 
 interface BookCardProps {
   book: Book;
-  index: number;
 }
 
-export function BookCard({ book, index }: BookCardProps) {
+export function BookCard({ book }: BookCardProps) {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all">
       <CardContent className="p-6">
@@ -67,7 +66,7 @@ export function BookCard({ book, index }: BookCardProps) {
             {book.emotionalPoints.length > 0 && (
               <div>
                 <h4 className="font-semibold text-navy dark:text-cream mb-2">
-                  Why you'll love it:
+                  Why you&apos;ll love it:
                 </h4>
                 <ul className="space-y-1">
                   {book.emotionalPoints.map((point, i) => (

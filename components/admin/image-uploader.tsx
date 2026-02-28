@@ -38,7 +38,17 @@ export function ImageUploader({
   const [urlInput, setUrlInput] = useState(value);
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
-  const [unsplashImages, setUnsplashImages] = useState<any[]>([]);
+  const [unsplashImages, setUnsplashImages] = useState<
+    Array<{
+      id: string;
+      url: string;
+      thumb: string;
+      description: string;
+      photographer: string;
+      photographerUrl: string;
+      downloadUrl: string;
+    }>
+  >([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

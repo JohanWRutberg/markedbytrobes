@@ -73,7 +73,7 @@ export default async function AdminAnalyticsPage() {
               Analytics
             </h1>
             <p className="text-muted-foreground">
-              Overview of your blog's performance
+              Overview of your blog&apos;s performance
             </p>
           </div>
           <Button variant="outline" asChild>

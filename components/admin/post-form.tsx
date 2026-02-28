@@ -112,7 +112,7 @@ export function PostForm() {
       });
 
       if (response.ok) {
-        const post = await response.json();
+        await response.json();
         router.push(`/admin/posts`);
       } else {
         alert("Failed to create post");

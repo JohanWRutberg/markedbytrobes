@@ -1,5 +1,3 @@
-import { AFFILIATE_DISCLOSURE_FULL } from "@/lib/affiliate";
-
 export const metadata = {
   title: "Affiliate Disclosure - Marked by Trobes",
   description: "Information about our affiliate relationships and disclosures",
@@ -71,7 +69,8 @@ export default function DisclosurePage() {
                   Support the Blog:
                 </strong>{" "}
                 If you find value in my content and choose to shop through my
-                links, you're helping to support this blog and the work I do.
+                links, you&apos;re helping to support this blog and the work I
+                do.
               </p>
             </div>
           </section>
@@ -98,8 +97,8 @@ export default function DisclosurePage() {
             </p>
             <p className="text-sm text-muted-foreground mt-4">
               This disclosure is provided in accordance with the Federal Trade
-              Commission's guidelines concerning the use of endorsements and
-              testimonials in advertising.
+              Commission&apos;s guidelines concerning the use of endorsements
+              and testimonials in advertising.
             </p>
           </section>
         </div>

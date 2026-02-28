@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { PostCard } from "@/components/blog/post-card";
 import { Pagination } from "@/components/blog/pagination";
 import { POSTS_PER_PAGE, CATEGORIES } from "@/lib/constants";
+import { Category } from "@prisma/client";
 
 interface CategoryPageProps {
   params: {
@@ -47,7 +48,7 @@ export default async function CategoryPage({
     prisma.post.findMany({
       where: {
         published: true,
-        category: categoryUpper as any,
+        category: categoryUpper as Category,
       },
       include: {
         author: {
@@ -65,7 +66,7 @@ export default async function CategoryPage({
     prisma.post.count({
       where: {
         published: true,
-        category: categoryUpper as any,
+        category: categoryUpper as Category,
       },
     }),
   ]);

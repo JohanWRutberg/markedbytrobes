@@ -157,7 +157,7 @@ export default function HomePage() {
                 <TrendingUp className="w-8 h-8 text-navy dark:text-cream" />
               </div>
               <h3 className="font-cinzel text-xl font-semibold mb-2 text-navy dark:text-cream">
-                What's Trending
+                What&apos;s Trending
               </h3>
               <p className="text-muted-foreground">
                 Stay updated with the latest must-read books
