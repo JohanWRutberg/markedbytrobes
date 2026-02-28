@@ -13,6 +13,7 @@ import Color from "@tiptap/extension-color";
 import FontFamily from "@tiptap/extension-font-family";
 import Youtube from "@tiptap/extension-youtube";
 import { AmazonButton } from "@/lib/tiptap-amazon-button";
+import { UnsplashImage } from "@/lib/tiptap-unsplash-image";
 import {
   Bold,
   Italic,
@@ -74,6 +75,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
     extensions: [
       StarterKit,
       Image,
+      UnsplashImage,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -156,8 +158,22 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
       setSearching(false);
     }
   };
-  const selectUnsplashImage = (imageUrl: string) => {
-    editor.chain().focus().setImage({ src: imageUrl }).run();
+  const selectUnsplashImage = (image: {
+    url: string;
+    photographer: string;
+    photographerUrl: string;
+    description: string;
+  }) => {
+    editor
+      .chain()
+      .focus()
+      .setUnsplashImage({
+        src: image.url,
+        photographer: image.photographer,
+        photographerUrl: image.photographerUrl,
+        alt: image.description || "Unsplash image",
+      })
+      .run();
     setImageDialogOpen(false);
     setSearchQuery("");
     setUnsplashImages([]);
@@ -466,7 +482,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                   <div
                     key={img.id}
                     className="relative aspect-video cursor-pointer rounded-lg overflow-hidden border hover:border-primary transition-colors"
-                    onClick={() => selectUnsplashImage(img.url)}
+                    onClick={() => selectUnsplashImage(img)}
                   >
                     {" "}
                     <img
