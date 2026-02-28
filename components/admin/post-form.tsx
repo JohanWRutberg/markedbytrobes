@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { RichEditor } from "@/components/admin/rich-editor";
+import { ImageUploader } from "@/components/admin/image-uploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -168,17 +169,11 @@ export function PostForm() {
             />
           </div>
 
-          <div>
-            <Label htmlFor="featuredImage">Featured Image URL</Label>
-            <Input
-              id="featuredImage"
-              value={formData.featuredImage}
-              onChange={(e) =>
-                setFormData({ ...formData, featuredImage: e.target.value })
-              }
-              placeholder="https://..."
-            />
-          </div>
+          <ImageUploader
+            label="Featured Image"
+            value={formData.featuredImage}
+            onChange={(url) => setFormData({ ...formData, featuredImage: url })}
+          />
 
           <div>
             <Label htmlFor="category">Category *</Label>
