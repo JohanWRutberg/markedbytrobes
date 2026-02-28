@@ -54,7 +54,6 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
   const [uploading, setUploading] = useState(false);
   const [urlInput, setUrlInput] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
-  const [linkText, setLinkText] = useState("");
   const [amazonUrl, setAmazonUrl] = useState("");
   const [amazonText, setAmazonText] = useState("Buy on Amazon");
   const [searchQuery, setSearchQuery] = useState("");
@@ -190,7 +189,6 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
         .run();
       setLinkDialogOpen(false);
       setLinkUrl("");
-      setLinkText("");
     }
   };
 

@@ -81,7 +81,7 @@ export async function PUT(
   { params }: { params: { id: string } },
 ) {
   try {
-    const user = await requireAdmin();
+    await requireAdmin();
     const body = await request.json();
     const data = postSchema.parse(body);
 
