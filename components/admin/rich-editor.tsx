@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
+import Link from "@tiptap/extension-link";
 import Table from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
@@ -11,6 +12,7 @@ import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import FontFamily from "@tiptap/extension-font-family";
 import Youtube from "@tiptap/extension-youtube";
+import { AmazonButton } from "@/lib/tiptap-amazon-button";
 import {
   Bold,
   Italic,
@@ -28,6 +30,7 @@ import {
   Link2,
   Search,
   Loader2,
+  ShoppingCart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,8 +49,14 @@ interface RichEditorProps {
 }
 export function RichEditor({ content, onChange }: RichEditorProps) {
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [amazonDialogOpen, setAmazonDialogOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [urlInput, setUrlInput] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
+  const [linkText, setLinkText] = useState("");
+  const [amazonUrl, setAmazonUrl] = useState("");
+  const [amazonText, setAmazonText] = useState("Buy on Amazon");
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [unsplashImages, setUnsplashImages] = useState<
@@ -66,6 +75,14 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
     extensions: [
       StarterKit,
       Image,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class:
+            "text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300",
+        },
+      }),
+      AmazonButton,
       Table.configure({ resizable: true }),
       TableRow,
       TableHeader,
@@ -162,6 +179,37 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
       .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
       .run();
   };
+
+  const setLink = () => {
+    if (linkUrl) {
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange("link")
+        .setLink({ href: linkUrl })
+        .run();
+      setLinkDialogOpen(false);
+      setLinkUrl("");
+      setLinkText("");
+    }
+  };
+
+  const removeLink = () => {
+    editor.chain().focus().unsetLink().run();
+  };
+
+  const setAmazonButton = () => {
+    if (amazonUrl) {
+      editor.commands.setAmazonButton({
+        url: amazonUrl,
+        text: amazonText || "Buy on Amazon",
+      });
+      setAmazonDialogOpen(false);
+      setAmazonUrl("");
+      setAmazonText("Buy on Amazon");
+    }
+  };
+
   return (
     <div className="border rounded-lg">
       {" "}
@@ -245,6 +293,21 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           {" "}
           <ListOrdered className="w-4 h-4" />{" "}
         </Button>{" "}
+        <Button
+          type="button"
+          variant={editor.isActive("link") ? "default" : "ghost"}
+          size="sm"
+          onClick={() => {
+            if (editor.isActive("link")) {
+              removeLink();
+            } else {
+              setLinkDialogOpen(true);
+            }
+          }}
+        >
+          {" "}
+          <Link2 className="w-4 h-4" />{" "}
+        </Button>{" "}
         <div className="w-px h-6 bg-border mx-1" />{" "}
         <Button type="button" variant="ghost" size="sm" onClick={addImage}>
           {" "}
@@ -257,6 +320,15 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
         <Button type="button" variant="ghost" size="sm" onClick={addTable}>
           {" "}
           <TableIcon className="w-4 h-4" />{" "}
+        </Button>{" "}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setAmazonDialogOpen(true)}
+        >
+          {" "}
+          <ShoppingCart className="w-4 h-4" />{" "}
         </Button>{" "}
         <div className="w-px h-6 bg-border mx-1" />{" "}
         <Button
@@ -414,6 +486,61 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
               )}
             </TabsContent>
           </Tabs>
+        </DialogContent>
+      </Dialog>
+      {/* Link Dialog */}
+      <Dialog open={linkDialogOpen} onOpenChange={setLinkDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Link</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>URL</Label>
+              <Input
+                type="url"
+                placeholder="https://example.com"
+                value={linkUrl}
+                onChange={(e) => setLinkUrl(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && setLink()}
+              />
+            </div>
+            <Button type="button" onClick={setLink}>
+              Set Link
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      {/* Amazon Button Dialog */}
+      <Dialog open={amazonDialogOpen} onOpenChange={setAmazonDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Insert Amazon Buy Button</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Amazon Affiliate URL</Label>
+              <Input
+                type="url"
+                placeholder="https://amazon.com/..."
+                value={amazonUrl}
+                onChange={(e) => setAmazonUrl(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Button Text</Label>
+              <Input
+                type="text"
+                placeholder="Buy on Amazon"
+                value={amazonText}
+                onChange={(e) => setAmazonText(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && setAmazonButton()}
+              />
+            </div>
+            <Button type="button" onClick={setAmazonButton}>
+              Insert Button
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
