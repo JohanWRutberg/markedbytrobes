@@ -12,11 +12,25 @@ import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
 import FontFamily from "@tiptap/extension-font-family";
 import Youtube from "@tiptap/extension-youtube";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
+import Highlight from "@tiptap/extension-highlight";
 import { AmazonButton } from "@/lib/tiptap-amazon-button";
 import { UnsplashImage } from "@/lib/tiptap-unsplash-image";
 import {
   Bold,
   Italic,
+  Underline as UnderlineIcon,
+  Strikethrough,
+  Highlighter,
+  Quote,
+  Code,
+  Minus,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  RemoveFormatting,
   List,
   ListOrdered,
   Heading1,
@@ -77,6 +91,12 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Underline,
+      Highlight.configure({ multicolor: false }),
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+        alignments: ["left", "center", "right", "justify"],
+      }),
       Image,
       UnsplashImage,
       Link.configure({
@@ -277,6 +297,33 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           {" "}
           <Italic className="w-4 h-4" />{" "}
         </Button>{" "}
+        <Button
+          type="button"
+          variant={editor.isActive("underline") ? "default" : "ghost"}
+          size="sm"
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+        >
+          {" "}
+          <UnderlineIcon className="w-4 h-4" />{" "}
+        </Button>{" "}
+        <Button
+          type="button"
+          variant={editor.isActive("strike") ? "default" : "ghost"}
+          size="sm"
+          onClick={() => editor.chain().focus().toggleStrike().run()}
+        >
+          {" "}
+          <Strikethrough className="w-4 h-4" />{" "}
+        </Button>{" "}
+        <Button
+          type="button"
+          variant={editor.isActive("highlight") ? "default" : "ghost"}
+          size="sm"
+          onClick={() => editor.chain().focus().toggleHighlight().run()}
+        >
+          {" "}
+          <Highlighter className="w-4 h-4" />{" "}
+        </Button>{" "}
         <div className="w-px h-6 bg-border mx-1" />{" "}
         <Button
           type="button"
@@ -338,6 +385,68 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
         </Button>{" "}
         <Button
           type="button"
+          variant={editor.isActive("blockquote") ? "default" : "ghost"}
+          size="sm"
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        >
+          {" "}
+          <Quote className="w-4 h-4" />{" "}
+        </Button>{" "}
+        <Button
+          type="button"
+          variant={editor.isActive("codeBlock") ? "default" : "ghost"}
+          size="sm"
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+        >
+          {" "}
+          <Code className="w-4 h-4" />{" "}
+        </Button>{" "}
+        <div className="w-px h-6 bg-border mx-1" />{" "}
+        <Button
+          type="button"
+          variant={editor.isActive({ textAlign: "left" }) ? "default" : "ghost"}
+          size="sm"
+          onClick={() => editor.chain().focus().setTextAlign("left").run()}
+        >
+          {" "}
+          <AlignLeft className="w-4 h-4" />{" "}
+        </Button>{" "}
+        <Button
+          type="button"
+          variant={
+            editor.isActive({ textAlign: "center" }) ? "default" : "ghost"
+          }
+          size="sm"
+          onClick={() => editor.chain().focus().setTextAlign("center").run()}
+        >
+          {" "}
+          <AlignCenter className="w-4 h-4" />{" "}
+        </Button>{" "}
+        <Button
+          type="button"
+          variant={
+            editor.isActive({ textAlign: "right" }) ? "default" : "ghost"
+          }
+          size="sm"
+          onClick={() => editor.chain().focus().setTextAlign("right").run()}
+        >
+          {" "}
+          <AlignRight className="w-4 h-4" />{" "}
+        </Button>{" "}
+        <Button
+          type="button"
+          variant={
+            editor.isActive({ textAlign: "justify" }) ? "default" : "ghost"
+          }
+          size="sm"
+          onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+        >
+          {" "}
+          <AlignJustify className="w-4 h-4" />{" "}
+        </Button>{" "}
+        <div className="w-px h-6 bg-border mx-1" />{" "}
+        <Button
+          type="button"
           variant={editor.isActive("link") ? "default" : "ghost"}
           size="sm"
           onClick={() => {
@@ -393,6 +502,27 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
         >
           {" "}
           <Redo className="w-4 h-4" />{" "}
+        </Button>{" "}
+        <div className="w-px h-6 bg-border mx-1" />{" "}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        >
+          {" "}
+          <Minus className="w-4 h-4" />{" "}
+        </Button>{" "}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            editor.chain().focus().clearNodes().unsetAllMarks().run()
+          }
+        >
+          {" "}
+          <RemoveFormatting className="w-4 h-4" />{" "}
         </Button>{" "}
       </div>{" "}
       {/* Editor */} <EditorContent editor={editor} />{" "}
