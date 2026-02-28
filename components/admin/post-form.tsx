@@ -13,27 +13,62 @@ import { CATEGORIES } from "@/lib/constants";
 import { createSlug } from "@/lib/text-utils";
 import { PlusCircle, X } from "lucide-react";
 
-export function PostForm() {
+interface PostFormProps {
+  initialData?: {
+    id: string;
+    title: string;
+    slug: string;
+    excerpt: string | null;
+    featuredImage: string | null;
+    content: string;
+    category: string;
+    published: boolean;
+    tags: string[];
+    books: Array<{
+      id?: string;
+      title: string;
+      author: string;
+      image: string | null;
+      amazonLink: string;
+      summary: string;
+      whoFor: string | null;
+      emotionalPoints: string[];
+    }>;
+  };
+  isEditing?: boolean;
+}
+
+export function PostForm({ initialData, isEditing = false }: PostFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    title: "",
-    slug: "",
-    excerpt: "",
-    featuredImage: "",
-    content: "",
-    category: "ROMANCE",
-    published: false,
-    tags: [] as string[],
-    books: [] as Array<{
-      title: string;
-      author: string;
-      image: string;
-      amazonLink: string;
-      summary: string;
-      whoFor: string;
-      emotionalPoints: string[];
-    }>,
+    title: initialData?.title || "",
+    slug: initialData?.slug || "",
+    excerpt: initialData?.excerpt || "",
+    featuredImage: initialData?.featuredImage || "",
+    content: initialData?.content || "",
+    category: initialData?.category || "ROMANCE",
+    published: initialData?.published || false,
+    tags: initialData?.tags || ([] as string[]),
+    books:
+      initialData?.books.map((book) => ({
+        title: book.title,
+        author: book.author,
+        image: book.image || "",
+        amazonLink: book.amazonLink,
+        summary: book.summary,
+        whoFor: book.whoFor || "",
+        emotionalPoints: book.emotionalPoints,
+      })) ||
+      ([] as Array<{
+        title: string;
+        author: string;
+        image: string;
+        amazonLink: string;
+        summary: string;
+        whoFor: string;
+        emotionalPoints: string[];
+      }>),
   });
 
   const [currentTag, setCurrentTag] = useState("");
@@ -102,8 +137,13 @@ export function PostForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/admin/posts", {
-        method: "POST",
+      const url = isEditing
+        ? `/api/admin/posts/${initialData?.id}`
+        : "/api/admin/posts";
+      const method = isEditing ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
@@ -115,11 +155,17 @@ export function PostForm() {
         await response.json();
         router.push(`/admin/posts`);
       } else {
-        alert("Failed to create post");
+        const error = await response.json();
+        alert(
+          error.error || `Failed to ${isEditing ? "update" : "create"} post`,
+        );
       }
     } catch (error) {
-      console.error("Error creating post:", error);
-      alert("Failed to create post");
+      console.error(
+        `Error ${isEditing ? "updating" : "creating"} post:`,
+        error,
+      );
+      alert(`Failed to ${isEditing ? "update" : "create"} post`);
     } finally {
       setIsSubmitting(false);
     }
@@ -367,14 +413,14 @@ export function PostForm() {
           onClick={(e) => handleSubmit(e, false)}
           disabled={isSubmitting}
         >
-          Save as Draft
+          {isEditing ? "Update as Draft" : "Save as Draft"}
         </Button>
         <Button
           type="button"
           onClick={(e) => handleSubmit(e, true)}
           disabled={isSubmitting}
         >
-          Publish
+          {isEditing ? "Update & Publish" : "Publish"}
         </Button>
       </div>
     </form>
