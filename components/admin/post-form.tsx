@@ -79,7 +79,7 @@ export function PostForm({ initialData, isEditing = false }: PostFormProps) {
     amazonLink: "",
     summary: "",
     whoFor: "",
-    emotionalPoints: ["", "", ""],
+    emotionalPoints: ["", "", "", "", ""],
   });
 
   const handleTitleChange = (title: string) => {
@@ -120,7 +120,7 @@ export function PostForm({ initialData, isEditing = false }: PostFormProps) {
         amazonLink: "",
         summary: "",
         whoFor: "",
-        emotionalPoints: ["", "", ""],
+        emotionalPoints: ["", "", "", "", ""],
       });
     }
   };
@@ -370,8 +370,8 @@ export function PostForm({ initialData, isEditing = false }: PostFormProps) {
               rows={2}
             />
             <div className="space-y-2">
-              <Label>3 Emotional Points</Label>
-              {[0, 1, 2].map((i) => (
+              <Label>5 Emotional Points</Label>
+              {[0, 1, 2, 3, 4].map((i) => (
                 <Input
                   key={i}
                   placeholder={`Point ${i + 1}`}
