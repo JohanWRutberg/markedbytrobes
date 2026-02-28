@@ -2,9 +2,10 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, BookOpen } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
@@ -25,8 +26,14 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <BookOpen className="h-6 w-6 text-navy dark:text-cream" />
+          <Link href="/" className="flex items-center space-x-3">
+            <Image
+              src="/logo.png"
+              alt="Marked by Trobes"
+              width={40}
+              height={40}
+              className="h-10 w-auto"
+            />
             <span className="font-cinzel text-xl font-bold text-navy dark:text-cream">
               Marked by Trobes
             </span>

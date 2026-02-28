@@ -1,19 +1,16 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { auth } from "./auth";
+import { withAuth } from "next-auth/middleware";
 
-export async function middleware(request: NextRequest) {
-  const session = await auth();
-
-  // Protect admin routes
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    if (!session || session.user.role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/auth/signin", request.url));
-    }
-  }
-
-  return NextResponse.next();
-}
+export default withAuth({
+  callbacks: {
+    authorized: ({ req, token }) => {
+      // Protect admin routes
+      if (req.nextUrl.pathname.startsWith("/admin")) {
+        return token?.role === "ADMIN";
+      }
+      return true;
+    },
+  },
+});
 
 export const config = {
   matcher: ["/admin/:path*"],

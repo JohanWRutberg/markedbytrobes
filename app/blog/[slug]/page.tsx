@@ -3,7 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Calendar, User, Clock, Tag } from "lucide-react";
 import prisma from "@/lib/prisma";
-import { auth } from "@/auth";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 import { Breadcrumbs } from "@/components/blog/breadcrumbs";
 import { BookCard } from "@/components/post/book-card";
 import { RatingWidget } from "@/components/post/rating-widget";
@@ -42,7 +43,7 @@ export async function generateMetadata({ params }: PostPageProps) {
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
 
   const post = await prisma.post.findUnique({
     where: { slug: params.slug },
