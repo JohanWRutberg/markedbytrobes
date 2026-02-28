@@ -1,0 +1,318 @@
+"use client";
+
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+
+export default function ProfilePage() {
+  const { data: session, update } = useSession();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  // Password change state
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  // Email change state
+  const [emailData, setEmailData] = useState({
+    newEmail: "",
+    password: "",
+  });
+
+  if (!session) {
+    router.push("/auth/signin");
+    return null;
+  }
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage(null);
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setMessage({
+        type: "error",
+        text: "De nya lösenorden matchar inte",
+      });
+      return;
+    }
+
+    if (passwordData.newPassword.length < 8) {
+      setMessage({
+        type: "error",
+        text: "Lösenordet måste vara minst 8 tecken",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("/api/user/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({
+          type: "success",
+          text: "Lösenordet har ändrats",
+        });
+        setPasswordData({
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+      } else {
+        setMessage({
+          type: "error",
+          text: data.error || "Kunde inte ändra lösenord",
+        });
+      }
+    } catch (error) {
+      setMessage({
+        type: "error",
+        text: "Ett fel uppstod",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmailChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage(null);
+
+    if (!emailData.newEmail || !emailData.password) {
+      setMessage({
+        type: "error",
+        text: "Fyll i alla fält",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("/api/user/change-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(emailData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({
+          type: "success",
+          text: "E-postadressen har ändrats",
+        });
+        setEmailData({
+          newEmail: "",
+          password: "",
+        });
+        // Update session with new email
+        await update();
+      } else {
+        setMessage({
+          type: "error",
+          text: data.error || "Kunde inte ändra e-postadress",
+        });
+      }
+    } catch (error) {
+      setMessage({
+        type: "error",
+        text: "Ett fel uppstod",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-12 max-w-4xl">
+      <h1 className="font-cinzel text-4xl font-bold text-navy dark:text-cream mb-8">
+        Profilinställningar
+      </h1>
+
+      {message && (
+        <Alert
+          className="mb-6"
+          variant={message.type === "error" ? "destructive" : "default"}
+        >
+          {message.type === "success" ? (
+            <CheckCircle2 className="h-4 w-4" />
+          ) : (
+            <AlertCircle className="h-4 w-4" />
+          )}
+          <AlertDescription>{message.text}</AlertDescription>
+        </Alert>
+      )}
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Account Info */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Kontoinformation</CardTitle>
+            <CardDescription>Din aktuella kontoinformation</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label className="text-sm text-muted-foreground">Namn</Label>
+              <p className="font-semibold">
+                {session.user.name || "Inget namn"}
+              </p>
+            </div>
+            <div>
+              <Label className="text-sm text-muted-foreground">
+                E-postadress
+              </Label>
+              <p className="font-semibold">{session.user.email}</p>
+            </div>
+            <div>
+              <Label className="text-sm text-muted-foreground">Roll</Label>
+              <p className="font-semibold">{session.user.role}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Change Password */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Byt lösenord</CardTitle>
+            <CardDescription>
+              Ändra ditt lösenord (minst 8 tecken)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handlePasswordChange} className="space-y-4">
+              <div>
+                <Label htmlFor="current-password">Nuvarande lösenord</Label>
+                <Input
+                  id="current-password"
+                  type="password"
+                  value={passwordData.currentPassword}
+                  onChange={(e) =>
+                    setPasswordData((prev) => ({
+                      ...prev,
+                      currentPassword: e.target.value,
+                    }))
+                  }
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="new-password">Nytt lösenord</Label>
+                <Input
+                  id="new-password"
+                  type="password"
+                  value={passwordData.newPassword}
+                  onChange={(e) =>
+                    setPasswordData((prev) => ({
+                      ...prev,
+                      newPassword: e.target.value,
+                    }))
+                  }
+                  required
+                  minLength={8}
+                />
+              </div>
+              <div>
+                <Label htmlFor="confirm-password">Bekräfta nytt lösenord</Label>
+                <Input
+                  id="confirm-password"
+                  type="password"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) =>
+                    setPasswordData((prev) => ({
+                      ...prev,
+                      confirmPassword: e.target.value,
+                    }))
+                  }
+                  required
+                  minLength={8}
+                />
+              </div>
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Byt lösenord
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Change Email */}
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Byt e-postadress</CardTitle>
+            <CardDescription>
+              Ändra din e-postadress (kräver ditt lösenord för säkerhet)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleEmailChange} className="space-y-4 max-w-md">
+              <div>
+                <Label htmlFor="new-email">Ny e-postadress</Label>
+                <Input
+                  id="new-email"
+                  type="email"
+                  value={emailData.newEmail}
+                  onChange={(e) =>
+                    setEmailData((prev) => ({
+                      ...prev,
+                      newEmail: e.target.value,
+                    }))
+                  }
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="email-password">
+                  Bekräfta med ditt lösenord
+                </Label>
+                <Input
+                  id="email-password"
+                  type="password"
+                  value={emailData.password}
+                  onChange={(e) =>
+                    setEmailData((prev) => ({
+                      ...prev,
+                      password: e.target.value,
+                    }))
+                  }
+                  required
+                />
+              </div>
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Byt e-postadress
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

@@ -5,9 +5,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User, LogOut, Settings } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useSession } from "next-auth/react";
 
 const navItems = [
@@ -67,12 +75,43 @@ export function Navbar() {
             <ThemeToggle />
 
             {session ? (
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/api/auth/signout">Sign Out</Link>
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <User className="w-4 h-4 mr-2" />
+                    {session.user.name || "User"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col">
+                      <span className="font-semibold">
+                        {session.user.name || "User"}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {session.user.email}
+                      </span>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="cursor-pointer">
+                      <Settings className="w-4 h-4 mr-2" />
+                      Profilinställningar
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/api/auth/signout" className="cursor-pointer">
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Logga ut
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Button variant="default" size="sm" asChild>
-                <Link href="/auth/signin">Sign In</Link>
+                <Link href="/auth/signin">Logga in</Link>
               </Button>
             )}
           </div>
@@ -127,14 +166,35 @@ export function Navbar() {
                 )}
 
                 {session ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                    className="w-full"
-                  >
-                    <Link href="/api/auth/signout">Sign Out</Link>
-                  </Button>
+                  <>
+                    <div className="text-sm font-semibold border-t pt-4">
+                      <div className="font-cinzel">
+                        {session.user.name || "User"}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {session.user.email}
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="w-full"
+                    >
+                      <Link href="/profile" onClick={() => setIsOpen(false)}>
+                        <Settings className="w-4 h-4 mr-2" />
+                        Profilinställningar
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="w-full"
+                    >
+                      <Link href="/api/auth/signout">Logga ut</Link>
+                    </Button>
+                  </>
                 ) : (
                   <Button
                     variant="default"
@@ -142,7 +202,7 @@ export function Navbar() {
                     asChild
                     className="w-full"
                   >
-                    <Link href="/auth/signin">Sign In</Link>
+                    <Link href="/auth/signin">Logga in</Link>
                   </Button>
                 )}
               </div>
