@@ -103,7 +103,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert max-w-none min-h-[400px] focus:outline-none p-4 border rounded-lg",
+          "prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert max-w-none min-h-[400px] focus:outline-none p-4 border rounded-lg bg-background text-foreground",
       },
     },
   });
