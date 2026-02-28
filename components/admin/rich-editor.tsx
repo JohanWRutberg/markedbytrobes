@@ -59,6 +59,9 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
   const [amazonText, setAmazonText] = useState("Buy on Amazon");
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
+  const [unsplashPage, setUnsplashPage] = useState(1);
+  const [hasMoreImages, setHasMoreImages] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [unsplashImages, setUnsplashImages] = useState<
     Array<{
       id: string;
@@ -142,20 +145,44 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
   const searchUnsplash = async () => {
     if (!searchQuery.trim()) return;
     setSearching(true);
+    setUnsplashPage(1);
     try {
       const response = await fetch(
-        `/api/unsplash?q=${encodeURIComponent(searchQuery)}&per_page=12`,
+        `/api/unsplash?q=${encodeURIComponent(searchQuery)}&per_page=12&page=1`,
       );
       if (!response.ok) {
         throw new Error("Failed to search images");
       }
       const data = await response.json();
       setUnsplashImages(data.images);
+      setHasMoreImages(data.images.length === 12);
     } catch (error) {
       console.error("Search error:", error);
       alert("Failed to search images");
     } finally {
       setSearching(false);
+    }
+  };
+
+  const loadMoreImages = async () => {
+    if (!searchQuery.trim() || loadingMore || !hasMoreImages) return;
+    setLoadingMore(true);
+    const nextPage = unsplashPage + 1;
+    try {
+      const response = await fetch(
+        `/api/unsplash?q=${encodeURIComponent(searchQuery)}&per_page=12&page=${nextPage}`,
+      );
+      if (!response.ok) {
+        throw new Error("Failed to load more images");
+      }
+      const data = await response.json();
+      setUnsplashImages((prev) => [...prev, ...data.images]);
+      setUnsplashPage(nextPage);
+      setHasMoreImages(data.images.length === 12);
+    } catch (error) {
+      console.error("Load more error:", error);
+    } finally {
+      setLoadingMore(false);
     }
   };
   const selectUnsplashImage = (image: {
@@ -177,6 +204,8 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
     setImageDialogOpen(false);
     setSearchQuery("");
     setUnsplashImages([]);
+    setUnsplashPage(1);
+    setHasMoreImages(false);
   };
   const addImage = () => {
     setImageDialogOpen(true);
@@ -476,7 +505,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                   )}{" "}
                 </Button>{" "}
               </div>{" "}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-4 max-h-[400px] overflow-y-auto">
                 {" "}
                 {unsplashImages.map((img) => (
                   <div
@@ -493,6 +522,25 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                   </div>
                 ))}
               </div>
+              {hasMoreImages && (
+                <div className="flex justify-center mt-4">
+                  <Button
+                    type="button"
+                    onClick={loadMoreImages}
+                    disabled={loadingMore}
+                    variant="outline"
+                  >
+                    {loadingMore ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        Laddar fler bilder...
+                      </>
+                    ) : (
+                      "Ladda fler bilder"
+                    )}
+                  </Button>
+                </div>
+              )}
               {unsplashImages.length === 0 && !searching && (
                 <p className="text-center text-muted-foreground py-8">
                   Search for free high-quality images from Unsplash
