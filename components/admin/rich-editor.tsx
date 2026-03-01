@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import HardBreak from "@tiptap/extension-hard-break";
@@ -146,6 +146,14 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
       },
     },
   });
+
+  // Update editor content when prop changes (for editing existing posts)
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content, false);
+    }
+  }, [editor, content]);
+
   if (!editor) {
     return null;
   }

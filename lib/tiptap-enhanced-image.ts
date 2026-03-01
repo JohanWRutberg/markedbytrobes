@@ -12,19 +12,20 @@ export const EnhancedImage = Image.extend<EnhancedImageOptions>({
   parseHTML() {
     return [
       {
-        tag: "span[data-image-wrapper] img",
+        tag: "span[data-image-wrapper]",
         getAttrs: (node) => {
           if (typeof node === "string") return false;
-          const wrapper = node.parentElement;
-          const src = node.getAttribute("src");
+          const img = node.querySelector("img");
+          if (!img) return false;
+          const src = img.getAttribute("src");
           if (!src) return false;
 
           return {
             src: src,
-            alt: node.getAttribute("alt") || "",
-            title: node.getAttribute("title") || "",
-            width: wrapper?.getAttribute("data-width") || "100%",
-            align: wrapper?.getAttribute("data-align") || "center",
+            alt: img.getAttribute("alt") || "",
+            title: img.getAttribute("title") || "",
+            width: node.getAttribute("data-width") || "100%",
+            align: node.getAttribute("data-align") || "center",
           };
         },
       },
@@ -32,6 +33,10 @@ export const EnhancedImage = Image.extend<EnhancedImageOptions>({
         tag: "img[src]",
         getAttrs: (node) => {
           if (typeof node === "string") return false;
+          // Skip if this img is inside a data-image-wrapper
+          if (node.parentElement?.hasAttribute("data-image-wrapper")) {
+            return false;
+          }
           const src = node.getAttribute("src");
           if (!src) return false;
 

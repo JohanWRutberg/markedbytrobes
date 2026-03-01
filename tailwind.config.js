@@ -15,6 +15,16 @@ module.exports = {
     "w-[512px]",
     "w-[700px]",
     "w-full",
+    // Float and margin classes for images
+    "float-left",
+    "float-right",
+    "mr-4",
+    "mr-6",
+    "ml-4",
+    "ml-6",
+    "mb-4",
+    "mb-6",
+    "inline-block",
   ],
   theme: {
     extend: {
