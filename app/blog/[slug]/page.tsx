@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import { Calendar, User, Clock, Tag } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
@@ -74,7 +73,7 @@ export default async function PostPage({ params }: PostPageProps) {
           createdAt: "desc",
         },
       },
-      ratings: session
+      ratings: session?.user?.id
         ? {
             where: {
               userId: session.user.id,
@@ -155,14 +154,13 @@ export default async function PostPage({ params }: PostPageProps) {
                 {categoryLabels[post.category]}
               </span>
               {post.tags.map((tag) => (
-                <Link
+                <span
                   key={tag.id}
-                  href={`/blog/tag/${tag.slug}`}
-                  className="px-3 py-1 bg-cream dark:bg-navy/50 text-navy dark:text-cream rounded-full text-sm hover:opacity-80 transition-opacity"
+                  className="px-3 py-1 bg-cream dark:bg-navy/50 text-navy dark:text-cream rounded-full text-sm"
                 >
                   <Tag className="w-3 h-3 inline mr-1" />
                   {tag.name}
-                </Link>
+                </span>
               ))}
             </div>
 
