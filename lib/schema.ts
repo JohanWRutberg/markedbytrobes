@@ -4,9 +4,6 @@ interface SchemaArticle {
   image?: string;
   datePublished: string;
   dateModified?: string;
-  author: {
-    name: string;
-  };
   category: string;
 }
 
@@ -21,7 +18,7 @@ export function generateArticleSchema(article: SchemaArticle) {
     dateModified: article.dateModified || article.datePublished,
     author: {
       "@type": "Person",
-      name: article.author.name,
+      name: "MarkedByTrobes",
     },
     publisher: {
       "@type": "Organization",

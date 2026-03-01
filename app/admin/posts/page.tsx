@@ -74,7 +74,7 @@ export default async function AdminPostsPage() {
                       </span>
                     </div>
                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                      <span>By {post.author.name}</span>
+                      <span>By MarkedByTrobes</span>
                       <span>
                         {new Date(post.createdAt).toLocaleDateString("sv-SE")}
                       </span>
