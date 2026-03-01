@@ -132,6 +132,10 @@ export default async function PostPage({ params }: PostPageProps) {
     SPORTS_ROMANCE: "Sports-romance",
   };
 
+  // Get category label with fallback
+  const categoryLabel =
+    categoryLabels[post.category] || post.category.replace(/_/g, " ");
+
   return (
     <article className="py-12" suppressHydrationWarning>
       {/* Track view on client side */}
@@ -144,7 +148,7 @@ export default async function PostPage({ params }: PostPageProps) {
             items={[
               { label: "Blog", href: "/blog" },
               {
-                label: categoryLabels[post.category],
+                label: categoryLabel,
                 href: `/blog/category/${post.category.toLowerCase()}`,
               },
               { label: post.title },
@@ -175,7 +179,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <header className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <span className="px-3 py-1 bg-navy/10 dark:bg-cream/20 text-navy dark:text-cream rounded-full text-sm font-semibold">
-                {categoryLabels[post.category]}
+                {categoryLabel}
               </span>
               {post.tags.map((tag) => (
                 <span
