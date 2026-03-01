@@ -61,6 +61,7 @@
     "react-dom": "^18.3.0",
     "react-hook-form": "^7.53.0",
     "redis": "^4.7.0",
+    "resend": "^6.9.3",
     "sharp": "^0.33.0",
     "slugify": "^1.6.6",
     "tailwind-merge": "^2.5.0",
