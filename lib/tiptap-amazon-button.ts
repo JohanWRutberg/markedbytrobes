@@ -36,9 +36,27 @@ export const AmazonButton = Node.create<AmazonButtonOptions>({
     return [
       {
         tag: "span[data-amazon-button]",
+        getAttrs: (node) => {
+          if (typeof node === "string") return null;
+          const element = node as HTMLElement;
+          const link = element.querySelector("a");
+          return {
+            url: link?.getAttribute("href") || null,
+            text: link?.textContent?.trim() || "Buy on Amazon",
+          };
+        },
       },
       {
         tag: "div[data-amazon-button]",
+        getAttrs: (node) => {
+          if (typeof node === "string") return null;
+          const element = node as HTMLElement;
+          const link = element.querySelector("a");
+          return {
+            url: link?.getAttribute("href") || null,
+            text: link?.textContent?.trim() || "Buy on Amazon",
+          };
+        },
       },
     ];
   },
@@ -60,6 +78,8 @@ export const AmazonButton = Node.create<AmazonButtonOptions>({
       "span",
       mergeAttributes(this.options.HTMLAttributes, {
         "data-amazon-button": "",
+        "data-amazon-url": amazonUrl,
+        "data-amazon-text": buttonText,
         class: "inline-block mx-1 my-1",
       }),
       [
