@@ -39,6 +39,9 @@ export const AmazonButton = Node.create<AmazonButtonOptions>({
   },
 
   renderHTML({ HTMLAttributes }) {
+    const buttonText = HTMLAttributes.text || "Buy on Amazon";
+    const amazonUrl = HTMLAttributes.url;
+
     return [
       "div",
       mergeAttributes(this.options.HTMLAttributes, {
@@ -48,38 +51,32 @@ export const AmazonButton = Node.create<AmazonButtonOptions>({
       [
         "a",
         {
-          href: HTMLAttributes.url,
+          href: amazonUrl,
           target: "_blank",
           rel: "noopener noreferrer nofollow",
           class:
-            "amazon-button inline-block text-white font-bold px-8 py-4 rounded-lg transform transition-all duration-200",
+            "amazon-button inline-flex items-center gap-2 text-white font-bold px-8 py-4 rounded-lg transform transition-all duration-200",
           style:
             "background: linear-gradient(135deg, #FF9900 0%, #FF9900 100%); color: white !important; border: 2px solid #CC7A00; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);",
         },
         [
-          "span",
+          "svg",
           {
-            class: "flex items-center gap-2",
+            xmlns: "http://www.w3.org/2000/svg",
+            width: "20",
+            height: "20",
+            viewBox: "0 0 640 640",
+            fill: "currentColor",
+            style: "display: inline-block;",
           },
           [
-            "svg",
+            "path",
             {
-              xmlns: "http://www.w3.org/2000/svg",
-              width: "20",
-              height: "20",
-              viewBox: "0 0 640 640",
-              fill: "currentColor",
-              class: "inline",
+              d: "M353.7 226.7C305 228.5 184.2 242.2 184.2 344.2C184.2 453.7 322.5 458.2 367.7 387.4C374.2 397.6 403.1 424.9 413 434.2L469.8 378.2C469.8 378.2 437.5 352.9 437.5 325.4L437.5 178.3C437.5 153 413 96 325.2 96C237.2 96 190.5 151 190.5 200.3L264 207.1C280.3 157.6 318.2 157.6 318.2 157.6C358.9 157.5 353.7 187.4 353.7 226.7zM353.7 313.5C353.7 393.5 269.5 381.5 269.5 330.7C269.5 283.5 320 274 353.7 272.9L353.7 313.5zM489.7 477C482 487 419.7 544 315.2 544C210.7 544 130.7 472.5 106.2 443C99.4 435.3 107.2 431.7 111.7 434.7C185 479.2 299.5 552.5 484.2 465C491.7 461.3 497.5 467 489.7 477zM529.5 479.2C523 495 513.5 506 508.3 510.2C502.8 514.7 498.8 512.9 501.8 506.4C504.8 499.9 521.1 459.9 514.5 451.4C508 443.1 477.5 447.1 466.5 448.2C455.7 449.2 453.5 450.2 452.5 447.9C450.2 442.2 474.2 432.4 490 430.4C505.7 428.6 531 429.6 536 436.1C539.7 441.2 536 463.2 529.5 479.2z",
             },
-            [
-              "path",
-              {
-                d: "M353.7 226.7C305 228.5 184.2 242.2 184.2 344.2C184.2 453.7 322.5 458.2 367.7 387.4C374.2 397.6 403.1 424.9 413 434.2L469.8 378.2C469.8 378.2 437.5 352.9 437.5 325.4L437.5 178.3C437.5 153 413 96 325.2 96C237.2 96 190.5 151 190.5 200.3L264 207.1C280.3 157.6 318.2 157.6 318.2 157.6C358.9 157.5 353.7 187.4 353.7 226.7zM353.7 313.5C353.7 393.5 269.5 381.5 269.5 330.7C269.5 283.5 320 274 353.7 272.9L353.7 313.5zM489.7 477C482 487 419.7 544 315.2 544C210.7 544 130.7 472.5 106.2 443C99.4 435.3 107.2 431.7 111.7 434.7C185 479.2 299.5 552.5 484.2 465C491.7 461.3 497.5 467 489.7 477zM529.5 479.2C523 495 513.5 506 508.3 510.2C502.8 514.7 498.8 512.9 501.8 506.4C504.8 499.9 521.1 459.9 514.5 451.4C508 443.1 477.5 447.1 466.5 448.2C455.7 449.2 453.5 450.2 452.5 447.9C450.2 442.2 474.2 432.4 490 430.4C505.7 428.6 531 429.6 536 436.1C539.7 441.2 536 463.2 529.5 479.2z",
-              },
-            ],
           ],
-          ["span", {}, HTMLAttributes.text || "Buy on Amazon"],
         ],
+        ["span", {}, buttonText],
       ],
     ];
   },
