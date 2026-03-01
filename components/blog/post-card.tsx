@@ -93,7 +93,7 @@ export function PostCard({ post, index = 0 }: PostCardProps) {
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <User className="w-4 h-4" />
-                <span>{post.author.name || "Anonymous"}</span>
+                <span>MarkedByTrobes</span>
               </div>
               {post.publishedAt && (
                 <div className="flex items-center gap-1">
