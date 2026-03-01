@@ -14,12 +14,24 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Loader2, CheckCircle2, AlertCircle, Upload } from "lucide-react";
+
+function getInitials(name: string | null | undefined): string {
+  if (!name) return "U";
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
 
 export default function ProfilePage() {
   const { data: session, update } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -204,6 +216,65 @@ export default function ProfilePage() {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      setMessage({
+        type: "error",
+        text: "Vänligen välj en bildfil",
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({
+        type: "error",
+        text: "Bilden får inte vara större än 5MB",
+      });
+      return;
+    }
+
+    setUploadingImage(true);
+    setMessage(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await fetch("/api/user/upload-image", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({
+          type: "success",
+          text: "Profilbilden har uppdaterats",
+        });
+        // Update session with new image
+        await update();
+      } else {
+        setMessage({
+          type: "error",
+          text: data.error || "Kunde inte ladda upp bild",
+        });
+      }
+    } catch {
+      setMessage({
+        type: "error",
+        text: "Ett fel uppstod vid uppladdning",
+      });
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <h1 className="font-cinzel text-4xl font-bold text-navy dark:text-cream mb-8">
@@ -225,6 +296,64 @@ export default function ProfilePage() {
       )}
 
       <div className="grid gap-6 md:grid-cols-2">
+        {/* Profile Picture */}
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Profilbild</CardTitle>
+            <CardDescription>
+              Ladda upp en profilbild eller använd din bild från Google
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-6">
+              <Avatar className="h-24 w-24">
+                <AvatarImage
+                  src={session.user.image || undefined}
+                  alt={session.user.name || "User"}
+                />
+                <AvatarFallback className="text-2xl">
+                  {getInitials(session.user.name)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <Label
+                  htmlFor="profile-image"
+                  className="cursor-pointer inline-block"
+                >
+                  <div
+                    className={`flex items-center gap-2 px-4 py-2 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors ${
+                      uploadingImage ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    {uploadingImage ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Laddar upp...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-4 h-4" />
+                        Välj ny bild
+                      </>
+                    )}
+                  </div>
+                  <Input
+                    id="profile-image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploadingImage}
+                    className="hidden"
+                  />
+                </Label>
+                <p className="text-xs text-muted-foreground mt-2">
+                  JPG, PNG eller GIF. Max 5MB.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Account Info */}
         <Card>
           <CardHeader>

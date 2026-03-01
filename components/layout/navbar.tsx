@@ -16,7 +16,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
+
+function getInitials(name: string | null | undefined): string {
+  if (!name) return "U";
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -77,9 +88,19 @@ export function Navbar() {
             {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <User className="w-4 h-4 mr-2" />
-                    {session.user.name || "User"}
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage
+                        src={session.user.image || undefined}
+                        alt={session.user.name || "User"}
+                      />
+                      <AvatarFallback className="text-xs">
+                        {getInitials(session.user.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="hidden sm:inline">
+                      {session.user.name || "User"}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -168,11 +189,24 @@ export function Navbar() {
                 {session ? (
                   <>
                     <div className="text-sm font-semibold border-t pt-4">
-                      <div className="font-cinzel">
-                        {session.user.name || "User"}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {session.user.email}
+                      <div className="flex items-center gap-3 mb-2">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage
+                            src={session.user.image || undefined}
+                            alt={session.user.name || "User"}
+                          />
+                          <AvatarFallback>
+                            {getInitials(session.user.name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-cinzel">
+                            {session.user.name || "User"}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {session.user.email}
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <Button
