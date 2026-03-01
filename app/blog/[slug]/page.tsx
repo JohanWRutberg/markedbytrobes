@@ -8,6 +8,7 @@ import { Breadcrumbs } from "@/components/blog/breadcrumbs";
 import { BookCard } from "@/components/post/book-card";
 import { RatingWidget } from "@/components/post/rating-widget";
 import { CommentSection } from "@/components/post/comment-section";
+import { ViewTracker } from "@/components/post/view-tracker";
 import { formatDate, readingTime } from "@/lib/text-utils";
 import { AFFILIATE_DISCLOSURE_SHORT } from "@/lib/affiliate";
 
@@ -97,16 +98,6 @@ export default async function PostPage({ params }: PostPageProps) {
       ? allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length
       : 0;
 
-  // Increment view count (fire and forget to avoid blocking)
-  prisma.post
-    .update({
-      where: { id: post.id },
-      data: { views: { increment: 1 } },
-    })
-    .catch(() => {
-      // Silently fail if view count update fails
-    });
-
   const categoryLabels: Record<string, string> = {
     ROMANCE: "Romance",
     SELF_DEVELOPMENT: "Self Development",
@@ -117,6 +108,9 @@ export default async function PostPage({ params }: PostPageProps) {
 
   return (
     <article className="py-12">
+      {/* Track view on client side */}
+      <ViewTracker postId={post.id} />
+
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           {/* Breadcrumbs */}
