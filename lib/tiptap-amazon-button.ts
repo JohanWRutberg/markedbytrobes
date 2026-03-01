@@ -44,8 +44,17 @@ export const AmazonButton = Node.create<AmazonButtonOptions>({
   },
 
   renderHTML({ HTMLAttributes }) {
-    const buttonText = HTMLAttributes.text || "Buy on Amazon";
-    const amazonUrl = HTMLAttributes.url;
+    const buttonText = String(HTMLAttributes.text || "Buy on Amazon");
+    const amazonUrl = String(HTMLAttributes.url || "");
+
+    // Don't render if we don't have a URL
+    if (!amazonUrl) {
+      return [
+        "span",
+        { class: "inline-block" },
+        "[Amazon Button - Missing URL]",
+      ];
+    }
 
     return [
       "span",
@@ -81,7 +90,7 @@ export const AmazonButton = Node.create<AmazonButtonOptions>({
             },
           ],
         ],
-        ["span", {}, buttonText],
+        buttonText,
       ],
     ];
   },

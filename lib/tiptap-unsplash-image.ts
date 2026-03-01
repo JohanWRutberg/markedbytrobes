@@ -87,6 +87,17 @@ export const UnsplashImage = Node.create<UnsplashImageOptions>({
               : "w-full";
     }
 
+    const src = String(HTMLAttributes.src || "");
+    const photographer = String(HTMLAttributes.photographer || "Unknown");
+    const photographerUrl = String(
+      HTMLAttributes.photographerUrl || "https://unsplash.com",
+    );
+
+    // Don't render if we don't have a source
+    if (!src) {
+      return ["div", { class: "my-6" }, "[Image - Missing Source]"];
+    }
+
     return [
       "figure",
       mergeAttributes(this.options.HTMLAttributes, {
@@ -96,8 +107,8 @@ export const UnsplashImage = Node.create<UnsplashImageOptions>({
       [
         "img",
         {
-          src: HTMLAttributes.src,
-          alt: HTMLAttributes.alt || "",
+          src: src,
+          alt: String(HTMLAttributes.alt || ""),
           class: imgClass,
         },
       ],
@@ -107,18 +118,18 @@ export const UnsplashImage = Node.create<UnsplashImageOptions>({
           class:
             "text-xs text-muted-foreground mt-2 text-right opacity-70 hover:opacity-100 transition-opacity",
         },
-        ["span", {}, "Photo by "],
+        "Photo by ",
         [
           "a",
           {
-            href: HTMLAttributes.photographerUrl,
+            href: photographerUrl,
             target: "_blank",
             rel: "noopener noreferrer",
             class: "underline hover:text-foreground transition-colors",
           },
-          HTMLAttributes.photographer,
+          photographer,
         ],
-        ["span", {}, " on "],
+        " on ",
         [
           "a",
           {

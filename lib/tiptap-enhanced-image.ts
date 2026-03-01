@@ -102,13 +102,18 @@ export const EnhancedImage = Image.extend<EnhancedImageOptions>({
               : "w-full";
     }
 
-    // Extract img attributes (remove data- attributes)
-    const imgAttrs: Record<string, unknown> = {};
+    // Extract img attributes (remove data- attributes) and ensure valid values
+    const imgAttrs: Record<string, string> = {};
     Object.keys(HTMLAttributes).forEach((key) => {
-      if (!key.startsWith("data-")) {
-        imgAttrs[key] = HTMLAttributes[key];
+      if (!key.startsWith("data-") && HTMLAttributes[key] != null) {
+        imgAttrs[key] = String(HTMLAttributes[key]);
       }
     });
+
+    // Ensure we have a src attribute
+    if (!imgAttrs.src) {
+      return ["span", { class: "my-4" }, "[Image - Missing Source]"];
+    }
 
     return [
       "span",
