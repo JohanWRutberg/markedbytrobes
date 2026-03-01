@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import HardBreak from "@tiptap/extension-hard-break";
 import Link from "@tiptap/extension-link";
@@ -48,6 +48,8 @@ import {
   Loader2,
   ShoppingCart,
   CornerDownLeft,
+  Maximize2,
+  MinusSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -320,6 +322,16 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
     }
   };
 
+  const updateImageSize = (size: string) => {
+    if (!editor) return;
+    editor.commands.updateAttributes("image", { width: size });
+  };
+
+  const updateImageAlign = (align: string) => {
+    if (!editor) return;
+    editor.commands.updateAttributes("image", { align: align });
+  };
+
   return (
     <div className="border rounded-lg">
       {" "}
@@ -331,6 +343,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           variant={editor.isActive("bold") ? "default" : "ghost"}
           size="sm"
           onClick={() => editor.chain().focus().toggleBold().run()}
+          title="Bold"
         >
           {" "}
           <Bold className="w-4 h-4" />{" "}
@@ -340,6 +353,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           variant={editor.isActive("italic") ? "default" : "ghost"}
           size="sm"
           onClick={() => editor.chain().focus().toggleItalic().run()}
+          title="Italic"
         >
           {" "}
           <Italic className="w-4 h-4" />{" "}
@@ -349,6 +363,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           variant={editor.isActive("underline") ? "default" : "ghost"}
           size="sm"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
+          title="Underline"
         >
           {" "}
           <UnderlineIcon className="w-4 h-4" />{" "}
@@ -358,6 +373,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           variant={editor.isActive("strike") ? "default" : "ghost"}
           size="sm"
           onClick={() => editor.chain().focus().toggleStrike().run()}
+          title="Strikethrough"
         >
           {" "}
           <Strikethrough className="w-4 h-4" />{" "}
@@ -367,6 +383,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           variant={editor.isActive("highlight") ? "default" : "ghost"}
           size="sm"
           onClick={() => editor.chain().focus().toggleHighlight().run()}
+          title="Highlight"
         >
           {" "}
           <Highlighter className="w-4 h-4" />{" "}
@@ -381,6 +398,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 1 }).run()
           }
+          title="Heading 1"
         >
           {" "}
           <Heading1 className="w-4 h-4" />{" "}
@@ -394,6 +412,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 2 }).run()
           }
+          title="Heading 2"
         >
           {" "}
           <Heading2 className="w-4 h-4" />{" "}
@@ -407,6 +426,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 3 }).run()
           }
+          title="Heading 3"
         >
           {" "}
           <Heading3 className="w-4 h-4" />{" "}
@@ -417,6 +437,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           variant={editor.isActive("bulletList") ? "default" : "ghost"}
           size="sm"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
+          title="Bullet List"
         >
           {" "}
           <List className="w-4 h-4" />{" "}
@@ -426,6 +447,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           variant={editor.isActive("orderedList") ? "default" : "ghost"}
           size="sm"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          title="Numbered List"
         >
           {" "}
           <ListOrdered className="w-4 h-4" />{" "}
@@ -435,6 +457,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           variant={editor.isActive("blockquote") ? "default" : "ghost"}
           size="sm"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          title="Quote"
         >
           {" "}
           <Quote className="w-4 h-4" />{" "}
@@ -444,6 +467,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           variant={editor.isActive("codeBlock") ? "default" : "ghost"}
           size="sm"
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          title="Code Block"
         >
           {" "}
           <Code className="w-4 h-4" />{" "}
@@ -454,6 +478,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           variant={editor.isActive({ textAlign: "left" }) ? "default" : "ghost"}
           size="sm"
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
+          title="Align Left"
         >
           {" "}
           <AlignLeft className="w-4 h-4" />{" "}
@@ -465,6 +490,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           }
           size="sm"
           onClick={() => editor.chain().focus().setTextAlign("center").run()}
+          title="Align Center"
         >
           {" "}
           <AlignCenter className="w-4 h-4" />{" "}
@@ -476,6 +502,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           }
           size="sm"
           onClick={() => editor.chain().focus().setTextAlign("right").run()}
+          title="Align Right"
         >
           {" "}
           <AlignRight className="w-4 h-4" />{" "}
@@ -487,6 +514,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           }
           size="sm"
           onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+          title="Align Justify"
         >
           {" "}
           <AlignJustify className="w-4 h-4" />{" "}
@@ -503,20 +531,39 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
               setLinkDialogOpen(true);
             }
           }}
+          title="Link"
         >
           {" "}
           <Link2 className="w-4 h-4" />{" "}
         </Button>{" "}
         <div className="w-px h-6 bg-border mx-1" />{" "}
-        <Button type="button" variant="ghost" size="sm" onClick={addImage}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={addImage}
+          title="Add Image"
+        >
           {" "}
           <ImageIcon className="w-4 h-4" />{" "}
         </Button>{" "}
-        <Button type="button" variant="ghost" size="sm" onClick={addYoutube}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={addYoutube}
+          title="Add YouTube Video"
+        >
           {" "}
           <YoutubeIcon className="w-4 h-4" />{" "}
         </Button>{" "}
-        <Button type="button" variant="ghost" size="sm" onClick={addTable}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={addTable}
+          title="Add Table"
+        >
           {" "}
           <TableIcon className="w-4 h-4" />{" "}
         </Button>{" "}
@@ -525,6 +572,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           variant="ghost"
           size="sm"
           onClick={() => setAmazonDialogOpen(true)}
+          title="Add Amazon Button"
         >
           {" "}
           <ShoppingCart className="w-4 h-4" />{" "}
@@ -536,6 +584,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           size="sm"
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
+          title="Undo"
         >
           {" "}
           <Undo className="w-4 h-4" />{" "}
@@ -546,6 +595,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           size="sm"
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
+          title="Redo"
         >
           {" "}
           <Redo className="w-4 h-4" />{" "}
@@ -556,6 +606,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          title="Horizontal Line"
         >
           {" "}
           <Minus className="w-4 h-4" />{" "}
@@ -577,6 +628,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           onClick={() =>
             editor.chain().focus().clearNodes().unsetAllMarks().run()
           }
+          title="Clear Formatting"
         >
           {" "}
           <RemoveFormatting className="w-4 h-4" />{" "}
@@ -589,6 +641,100 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           Tip: Press Shift+Enter for line breaks
         </div>
       </div>{" "}
+      {/* Image Bubble Menu */}
+      {editor && (
+        <BubbleMenu
+          editor={editor}
+          tippyOptions={{ duration: 100 }}
+          shouldShow={({ editor }) => {
+            return editor.isActive("image");
+          }}
+        >
+          <div className="flex items-center gap-2 bg-background border rounded-lg shadow-lg p-2">
+            <div className="flex flex-col gap-1">
+              <span className="text-xs font-medium px-2">Size:</span>
+              <div className="flex gap-1">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => updateImageSize("100%")}
+                  title="Full Width"
+                  className="h-8 px-2"
+                >
+                  <Maximize2 className="w-4 h-4" />
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => updateImageSize("large")}
+                  title="Large"
+                  className="h-8 px-2"
+                >
+                  L
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => updateImageSize("medium")}
+                  title="Medium"
+                  className="h-8 px-2"
+                >
+                  M
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => updateImageSize("small")}
+                  title="Small"
+                  className="h-8 px-2"
+                >
+                  S
+                </Button>
+              </div>
+            </div>
+            <div className="w-px h-12 bg-border" />
+            <div className="flex flex-col gap-1">
+              <span className="text-xs font-medium px-2">Position:</span>
+              <div className="flex gap-1">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => updateImageAlign("left")}
+                  title="Left"
+                  className="h-8 px-2"
+                >
+                  <AlignLeft className="w-4 h-4" />
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => updateImageAlign("center")}
+                  title="Center"
+                  className="h-8 px-2"
+                >
+                  <AlignCenter className="w-4 h-4" />
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => updateImageAlign("right")}
+                  title="Right"
+                  className="h-8 px-2"
+                >
+                  <AlignRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </BubbleMenu>
+      )}
       {/* Image Upload Dialog */}{" "}
       <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
         {" "}
