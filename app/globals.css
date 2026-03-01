@@ -163,13 +163,48 @@
   }
 
   /* Amazon Button in blog content */
-  .prose a[href*="amazon"] {
-    background-color: #ff9900 !important;
+  .prose .amazon-button,
+  .prose a[href*="amazon"].amazon-button,
+  .prose a[data-amazon-button] {
+    background: linear-gradient(135deg, #ff9900 0%, #ff9900 100%) !important;
     color: white !important;
+    border: 2px solid #cc7a00 !important;
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.3),
+      0 1px 3px rgba(0, 0, 0, 0.2) !important;
+    text-decoration: none !important;
   }
 
-  .prose a[href*="amazon"]:hover {
-    background-color: #e68a00 !important;
+  .prose .amazon-button:hover,
+  .prose a[href*="amazon"].amazon-button:hover,
+  .prose a[data-amazon-button]:hover {
+    background: linear-gradient(135deg, #e68a00 0%, #cc7a00 100%) !important;
+    box-shadow:
+      0 6px 8px rgba(0, 0, 0, 0.4),
+      0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    transform: scale(1.05) !important;
+    border-color: #b36b00 !important;
+  }
+
+  /* Dark mode adjustments for Amazon button */
+  .dark .prose .amazon-button,
+  .dark .prose a[href*="amazon"].amazon-button,
+  .dark .prose a[data-amazon-button] {
+    border-color: #ffb347 !important;
+    box-shadow:
+      0 4px 6px rgba(255, 153, 0, 0.4),
+      0 1px 3px rgba(255, 153, 0, 0.2),
+      0 0 20px rgba(255, 153, 0, 0.15) !important;
+  }
+
+  .dark .prose .amazon-button:hover,
+  .dark .prose a[href*="amazon"].amazon-button:hover,
+  .dark .prose a[data-amazon-button]:hover {
+    box-shadow:
+      0 6px 8px rgba(255, 153, 0, 0.5),
+      0 2px 4px rgba(255, 153, 0, 0.3),
+      0 0 25px rgba(255, 153, 0, 0.2) !important;
+    border-color: #ffcc80 !important;
   }
 
   /* Additional specificity for elements with color attribute */

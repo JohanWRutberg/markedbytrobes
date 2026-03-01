@@ -52,9 +52,9 @@ export const AmazonButton = Node.create<AmazonButtonOptions>({
           target: "_blank",
           rel: "noopener noreferrer nofollow",
           class:
-            "inline-block text-white font-semibold px-8 py-4 rounded-lg shadow-lg transform transition hover:scale-105 hover:shadow-xl",
+            "amazon-button inline-block text-white font-bold px-8 py-4 rounded-lg transform transition-all duration-200",
           style:
-            "background-color: #FF9900 !important; color: white !important;",
+            "background: linear-gradient(135deg, #FF9900 0%, #FF9900 100%); color: white !important; border: 2px solid #CC7A00; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);",
         },
         [
           "span",
