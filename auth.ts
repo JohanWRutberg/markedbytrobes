@@ -18,6 +18,7 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
       name: "credentials",
@@ -58,12 +59,12 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
       } else if (token.email) {
-        // Fetch user data from database to get role
+        // Fetch user data from database to get latest role
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
         });
