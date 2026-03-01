@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { AmazonIcon } from "@/components/ui/amazon-icon";
 import { createAmazonLink } from "@/lib/affiliate";
 
 interface Book {
@@ -88,8 +88,8 @@ export function BookCard({ book }: BookCardProps) {
                   rel="noopener noreferrer nofollow sponsored"
                   className="group"
                 >
+                  <AmazonIcon className="w-4 h-4" />
                   Get on Amazon
-                  <ExternalLink className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </a>
               </Button>
               <Button variant="outline" size="lg" asChild>
