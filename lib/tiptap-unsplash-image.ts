@@ -63,28 +63,46 @@ export const UnsplashImage = Node.create<UnsplashImageOptions>({
 
     let figureClass = "my-6 ";
     let imgClass = "rounded-lg ";
+    let captionClass =
+      "text-xs text-muted-foreground mt-2 opacity-70 hover:opacity-100 transition-opacity ";
+
+    // Determine image width class
+    const getWidthClass = () => {
+      switch (width) {
+        case "x-small":
+          return "w-32";
+        case "small":
+          return "w-48";
+        case "medium":
+          return "w-64";
+        case "large":
+          return "w-96";
+        case "x-large":
+          return "w-[512px]";
+        case "100%":
+          return "w-full";
+        default:
+          return "w-full";
+      }
+    };
 
     if (width === "100%") {
       figureClass += "flex flex-col items-center";
       imgClass += "w-full";
+      captionClass += "text-center";
     } else if (align === "left") {
-      figureClass += "float-left mr-4 mb-4 max-w-sm";
-      imgClass +=
-        width === "small" ? "w-48" : width === "medium" ? "w-64" : "w-96";
+      figureClass += "float-left mr-4 mb-4 inline-block";
+      imgClass += getWidthClass();
+      captionClass += "text-left";
     } else if (align === "right") {
-      figureClass += "float-right ml-4 mb-4 max-w-sm";
-      imgClass +=
-        width === "small" ? "w-48" : width === "medium" ? "w-64" : "w-96";
+      figureClass += "float-right ml-4 mb-4 inline-block";
+      imgClass += getWidthClass();
+      captionClass += "text-right";
     } else {
+      // Center alignment
       figureClass += "flex flex-col items-center";
-      imgClass +=
-        width === "small"
-          ? "w-48"
-          : width === "medium"
-            ? "w-64"
-            : width === "large"
-              ? "w-96"
-              : "w-full";
+      imgClass += getWidthClass();
+      captionClass += "text-center";
     }
 
     const src = String(HTMLAttributes.src || "");
@@ -115,8 +133,7 @@ export const UnsplashImage = Node.create<UnsplashImageOptions>({
       [
         "figcaption",
         {
-          class:
-            "text-xs text-muted-foreground mt-2 text-right opacity-70 hover:opacity-100 transition-opacity",
+          class: captionClass,
         },
         "Photo by ",
         [

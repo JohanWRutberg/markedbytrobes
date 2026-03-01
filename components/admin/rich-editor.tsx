@@ -323,12 +323,20 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
 
   const updateImageSize = (size: string) => {
     if (!editor) return;
-    editor.commands.updateAttributes("image", { width: size });
+    if (editor.isActive("image")) {
+      editor.commands.updateAttributes("image", { width: size });
+    } else if (editor.isActive("unsplashImage")) {
+      editor.commands.updateAttributes("unsplashImage", { width: size });
+    }
   };
 
   const updateImageAlign = (align: string) => {
     if (!editor) return;
-    editor.commands.updateAttributes("image", { align: align });
+    if (editor.isActive("image")) {
+      editor.commands.updateAttributes("image", { align: align });
+    } else if (editor.isActive("unsplashImage")) {
+      editor.commands.updateAttributes("unsplashImage", { align: align });
+    }
   };
 
   return (
@@ -646,7 +654,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           editor={editor}
           tippyOptions={{ duration: 100 }}
           shouldShow={({ editor }) => {
-            return editor.isActive("image");
+            return editor.isActive("image") || editor.isActive("unsplashImage");
           }}
         >
           <div className="flex items-center gap-2 bg-background border rounded-lg shadow-lg p-2">
@@ -667,8 +675,18 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                   type="button"
                   size="sm"
                   variant="ghost"
+                  onClick={() => updateImageSize("x-large")}
+                  title="X-Large (512px)"
+                  className="h-8 px-2"
+                >
+                  XL
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
                   onClick={() => updateImageSize("large")}
-                  title="Large"
+                  title="Large (384px)"
                   className="h-8 px-2"
                 >
                   L
@@ -678,7 +696,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                   size="sm"
                   variant="ghost"
                   onClick={() => updateImageSize("medium")}
-                  title="Medium"
+                  title="Medium (256px)"
                   className="h-8 px-2"
                 >
                   M
@@ -688,10 +706,20 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                   size="sm"
                   variant="ghost"
                   onClick={() => updateImageSize("small")}
-                  title="Small"
+                  title="Small (192px)"
                   className="h-8 px-2"
                 >
                   S
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => updateImageSize("x-small")}
+                  title="X-Small (128px)"
+                  className="h-8 px-2"
+                >
+                  XS
                 </Button>
               </div>
             </div>
@@ -757,9 +785,11 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                 className="w-full px-3 py-2 border rounded-md bg-background"
               >
                 <option value="100%">Full Width</option>
+                <option value="x-large">X-Large (512px)</option>
                 <option value="large">Large (384px)</option>
                 <option value="medium">Medium (256px)</option>
                 <option value="small">Small (192px)</option>
+                <option value="x-small">X-Small (128px)</option>
               </select>
             </div>
             <div className="space-y-2">

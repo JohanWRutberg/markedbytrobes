@@ -79,27 +79,38 @@ export const EnhancedImage = Image.extend<EnhancedImageOptions>({
     let wrapperClass = "my-4 ";
     let imgClass = "rounded-lg ";
 
+    // Determine image width class
+    const getWidthClass = () => {
+      switch (width) {
+        case "x-small":
+          return "w-32";
+        case "small":
+          return "w-48";
+        case "medium":
+          return "w-64";
+        case "large":
+          return "w-96";
+        case "x-large":
+          return "w-[512px]";
+        case "100%":
+          return "w-full";
+        default:
+          return "w-full";
+      }
+    };
+
     if (width === "100%") {
       wrapperClass += "flex justify-center";
       imgClass += "w-full";
     } else if (align === "left") {
       wrapperClass += "float-left mr-4 mb-4";
-      imgClass +=
-        width === "small" ? "w-48" : width === "medium" ? "w-64" : "w-96";
+      imgClass += getWidthClass();
     } else if (align === "right") {
       wrapperClass += "float-right ml-4 mb-4";
-      imgClass +=
-        width === "small" ? "w-48" : width === "medium" ? "w-64" : "w-96";
+      imgClass += getWidthClass();
     } else {
       wrapperClass += "flex justify-center";
-      imgClass +=
-        width === "small"
-          ? "w-48"
-          : width === "medium"
-            ? "w-64"
-            : width === "large"
-              ? "w-96"
-              : "w-full";
+      imgClass += getWidthClass();
     }
 
     // Extract img attributes (remove data- attributes) and ensure valid values

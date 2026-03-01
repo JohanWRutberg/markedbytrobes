@@ -208,6 +208,21 @@
     margin-bottom: 1rem;
   }
 
+  /* Unsplash image figure styles for floating */
+  .prose figure[data-unsplash-image] {
+    margin: 1.5rem 0;
+  }
+
+  .prose figure[data-unsplash-image].float-left,
+  .prose figure[data-unsplash-image].float-right {
+    max-width: fit-content;
+  }
+
+  .prose figure[data-unsplash-image].inline-block {
+    display: inline-block;
+    vertical-align: top;
+  }
+
   /* Clear floats after paragraphs with floating images */
   .prose::after,
   .blog-content::after {
