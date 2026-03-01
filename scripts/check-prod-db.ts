@@ -1,7 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 
-const PROD_DATABASE_URL =
-  "postgresql://neondb_owner:npg_SpfH7zwtgbX4@ep-jolly-violet-agh5vtgp-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+const PROD_DATABASE_URL = process.env.PROD_DATABASE_URL;
+
+if (!PROD_DATABASE_URL) {
+  console.error("Error: PROD_DATABASE_URL environment variable is not set");
+  process.exit(1);
+}
 
 async function checkProdDatabase() {
   const prisma = new PrismaClient({
