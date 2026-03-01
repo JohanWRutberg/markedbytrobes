@@ -10,6 +10,7 @@ import { RatingWidget } from "@/components/post/rating-widget";
 import { CommentSection } from "@/components/post/comment-section";
 import { ViewTracker } from "@/components/post/view-tracker";
 import { BlogContent } from "@/components/post/blog-content";
+import { PostLikeButton } from "@/components/post/post-like-button";
 import { formatDate, readingTime } from "@/lib/text-utils";
 import { AFFILIATE_DISCLOSURE_SHORT } from "@/lib/affiliate";
 
@@ -83,6 +84,19 @@ export default async function PostPage({ params }: PostPageProps) {
             take: 1,
           }
         : false,
+      likes: session?.user?.id
+        ? {
+            where: {
+              userId: session.user.id,
+            },
+            take: 1,
+          }
+        : false,
+      _count: {
+        select: {
+          likes: true,
+        },
+      },
     },
   });
 
@@ -98,6 +112,10 @@ export default async function PostPage({ params }: PostPageProps) {
     allRatings.length > 0
       ? allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length
       : 0;
+
+  // Calculate likes
+  const likeCount = post._count.likes;
+  const userLiked = !!(post.likes && post.likes.length > 0);
 
   const categoryLabels: Record<string, string> = {
     ROMANCE: "Romance",
@@ -224,6 +242,15 @@ export default async function PostPage({ params }: PostPageProps) {
               }
               averageRating={averageRating}
               totalRatings={allRatings.length}
+            />
+          </div>
+
+          {/* Like Button */}
+          <div className="mb-12 flex justify-center">
+            <PostLikeButton
+              postId={post.id}
+              initialLikeCount={likeCount}
+              initialIsLiked={userLiked}
             />
           </div>
 

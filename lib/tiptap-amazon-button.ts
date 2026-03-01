@@ -15,7 +15,9 @@ declare module "@tiptap/core" {
 export const AmazonButton = Node.create<AmazonButtonOptions>({
   name: "amazonButton",
 
-  group: "block",
+  group: "inline",
+
+  inline: true,
 
   atom: true,
 
@@ -33,6 +35,9 @@ export const AmazonButton = Node.create<AmazonButtonOptions>({
   parseHTML() {
     return [
       {
+        tag: "span[data-amazon-button]",
+      },
+      {
         tag: "div[data-amazon-button]",
       },
     ];
@@ -43,10 +48,10 @@ export const AmazonButton = Node.create<AmazonButtonOptions>({
     const amazonUrl = HTMLAttributes.url;
 
     return [
-      "div",
+      "span",
       mergeAttributes(this.options.HTMLAttributes, {
         "data-amazon-button": "",
-        class: "my-4 text-center",
+        class: "inline-block mx-1 my-1",
       }),
       [
         "a",
@@ -55,16 +60,16 @@ export const AmazonButton = Node.create<AmazonButtonOptions>({
           target: "_blank",
           rel: "noopener noreferrer nofollow",
           class:
-            "amazon-button inline-flex items-center gap-2 text-white font-bold px-8 py-4 rounded-lg transform transition-all duration-200",
+            "amazon-button inline-flex items-center gap-2 font-medium px-4 py-2 rounded-md transition-all duration-200 hover:scale-105",
           style:
-            "background: linear-gradient(135deg, #FF9900 0%, #FF9900 100%); color: white !important; border: 2px solid #CC7A00; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);",
+            "background-color: var(--amazon-bg, #f0dfcc); color: var(--amazon-text, #0c1c33); border: 1px solid var(--amazon-border, #d4c4b0);",
         },
         [
           "svg",
           {
             xmlns: "http://www.w3.org/2000/svg",
-            width: "20",
-            height: "20",
+            width: "16",
+            height: "16",
             viewBox: "0 0 640 640",
             fill: "currentColor",
             style: "display: inline-block;",

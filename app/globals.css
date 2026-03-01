@@ -33,6 +33,11 @@
     --ring: 222 47% 11%;
 
     --radius: 0.5rem;
+
+    /* Amazon button colors */
+    --amazon-bg: #f0dfcc;
+    --amazon-text: #0c1c33;
+    --amazon-border: #d4c4b0;
   }
 
   .dark {
@@ -63,6 +68,11 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 33 29% 87%;
+
+    /* Amazon button colors for dark mode */
+    --amazon-bg: #0c1c33;
+    --amazon-text: #f0dfcc;
+    --amazon-border: #1a2947;
   }
 }
 
@@ -162,49 +172,54 @@
     color: #60a5fa !important;
   }
 
-  /* Amazon Button in blog content */
+  /* Amazon Button in blog content - Using theme colors */
   .prose .amazon-button,
-  .prose a[href*="amazon"].amazon-button,
-  .prose a[data-amazon-button] {
-    background: linear-gradient(135deg, #ff9900 0%, #ff9900 100%) !important;
-    color: white !important;
-    border: 2px solid #cc7a00 !important;
-    box-shadow:
-      0 4px 6px rgba(0, 0, 0, 0.3),
-      0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  .prose a.amazon-button,
+  .prose span[data-amazon-button] a {
+    background-color: var(--amazon-bg) !important;
+    color: var(--amazon-text) !important;
+    border: 1px solid var(--amazon-border) !important;
     text-decoration: none !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
   }
 
   .prose .amazon-button:hover,
-  .prose a[href*="amazon"].amazon-button:hover,
-  .prose a[data-amazon-button]:hover {
-    background: linear-gradient(135deg, #e68a00 0%, #cc7a00 100%) !important;
-    box-shadow:
-      0 6px 8px rgba(0, 0, 0, 0.4),
-      0 2px 4px rgba(0, 0, 0, 0.3) !important;
-    transform: scale(1.05) !important;
-    border-color: #b36b00 !important;
+  .prose a.amazon-button:hover,
+  .prose span[data-amazon-button] a:hover {
+    opacity: 0.9 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
   }
 
-  /* Dark mode adjustments for Amazon button */
-  .dark .prose .amazon-button,
-  .dark .prose a[href*="amazon"].amazon-button,
-  .dark .prose a[data-amazon-button] {
-    border-color: #ffb347 !important;
-    box-shadow:
-      0 4px 6px rgba(255, 153, 0, 0.4),
-      0 1px 3px rgba(255, 153, 0, 0.2),
-      0 0 20px rgba(255, 153, 0, 0.15) !important;
+  /* Image wrapper styles for floating images */
+  .prose span[data-image-wrapper] {
+    display: block;
+    clear: both;
   }
 
-  .dark .prose .amazon-button:hover,
-  .dark .prose a[href*="amazon"].amazon-button:hover,
-  .dark .prose a[data-amazon-button]:hover {
-    box-shadow:
-      0 6px 8px rgba(255, 153, 0, 0.5),
-      0 2px 4px rgba(255, 153, 0, 0.3),
-      0 0 25px rgba(255, 153, 0, 0.2) !important;
-    border-color: #ffcc80 !important;
+  .prose span[data-image-wrapper].float-left {
+    float: left;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .prose span[data-image-wrapper].float-right {
+    float: right;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Clear floats after paragraphs with floating images */
+  .prose::after,
+  .blog-content::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  /* Ensure images don't overflow their containers */
+  .prose img {
+    max-width: 100%;
+    height: auto;
   }
 
   /* Additional specificity for elements with color attribute */

@@ -12,6 +12,8 @@ declare module "@tiptap/core" {
         photographer: string;
         photographerUrl: string;
         alt?: string;
+        width?: string;
+        align?: string;
       }) => ReturnType;
     };
   }
@@ -38,6 +40,12 @@ export const UnsplashImage = Node.create<UnsplashImageOptions>({
       alt: {
         default: null,
       },
+      width: {
+        default: "100%",
+      },
+      align: {
+        default: "center",
+      },
     };
   },
 
@@ -50,18 +58,47 @@ export const UnsplashImage = Node.create<UnsplashImageOptions>({
   },
 
   renderHTML({ HTMLAttributes }) {
+    const width = HTMLAttributes.width || "100%";
+    const align = HTMLAttributes.align || "center";
+
+    let figureClass = "my-6 ";
+    let imgClass = "rounded-lg ";
+
+    if (width === "100%") {
+      figureClass += "flex flex-col items-center";
+      imgClass += "w-full";
+    } else if (align === "left") {
+      figureClass += "float-left mr-4 mb-4 max-w-sm";
+      imgClass +=
+        width === "small" ? "w-48" : width === "medium" ? "w-64" : "w-96";
+    } else if (align === "right") {
+      figureClass += "float-right ml-4 mb-4 max-w-sm";
+      imgClass +=
+        width === "small" ? "w-48" : width === "medium" ? "w-64" : "w-96";
+    } else {
+      figureClass += "flex flex-col items-center";
+      imgClass +=
+        width === "small"
+          ? "w-48"
+          : width === "medium"
+            ? "w-64"
+            : width === "large"
+              ? "w-96"
+              : "w-full";
+    }
+
     return [
       "figure",
       mergeAttributes(this.options.HTMLAttributes, {
         "data-unsplash-image": "",
-        class: "my-6",
+        class: figureClass,
       }),
       [
         "img",
         {
           src: HTMLAttributes.src,
           alt: HTMLAttributes.alt || "",
-          class: "w-full rounded-lg",
+          class: imgClass,
         },
       ],
       [
@@ -103,7 +140,11 @@ export const UnsplashImage = Node.create<UnsplashImageOptions>({
         ({ commands }) => {
           return commands.insertContent({
             type: this.name,
-            attrs: options,
+            attrs: {
+              ...options,
+              width: options.width || "100%",
+              align: options.align || "center",
+            },
           });
         },
     };

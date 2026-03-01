@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
+import HardBreak from "@tiptap/extension-hard-break";
 import Link from "@tiptap/extension-link";
 import Table from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
@@ -17,6 +17,7 @@ import Underline from "@tiptap/extension-underline";
 import Highlight from "@tiptap/extension-highlight";
 import { AmazonButton } from "@/lib/tiptap-amazon-button";
 import { UnsplashImage } from "@/lib/tiptap-unsplash-image";
+import { EnhancedImage } from "@/lib/tiptap-enhanced-image";
 import {
   Bold,
   Italic,
@@ -46,6 +47,7 @@ import {
   Search,
   Loader2,
   ShoppingCart,
+  CornerDownLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,6 +79,8 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
   const [unsplashPage, setUnsplashPage] = useState(1);
   const [hasMoreImages, setHasMoreImages] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [imageWidth, setImageWidth] = useState("100%");
+  const [imageAlign, setImageAlign] = useState("center");
   const [errorAlert, setErrorAlert] = useState<{
     open: boolean;
     message: string;
@@ -95,14 +99,23 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        hardBreak: false, // We'll use our custom HardBreak
+      }),
+      HardBreak.extend({
+        addKeyboardShortcuts() {
+          return {
+            "Shift-Enter": () => this.editor.commands.setHardBreak(),
+          };
+        },
+      }),
       Underline,
       Highlight.configure({ multicolor: false }),
       TextAlign.configure({
         types: ["heading", "paragraph"],
         alignments: ["left", "center", "right", "justify"],
       }),
-      Image,
+      EnhancedImage,
       UnsplashImage,
       Link.configure({
         openOnClick: false,
@@ -151,8 +164,18 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
         throw new Error(error.error || "Upload failed");
       }
       const data = await response.json();
-      editor.chain().focus().setImage({ src: data.url }).run();
+      editor
+        .chain()
+        .focus()
+        .setImage({
+          src: data.url,
+          width: imageWidth,
+          align: imageAlign,
+        } as any)
+        .run();
       setImageDialogOpen(false);
+      setImageWidth("100%");
+      setImageAlign("center");
     } catch (error) {
       console.error("Upload error:", error);
       setErrorAlert({
@@ -166,9 +189,19 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
   };
   const handleUrlSubmit = () => {
     if (urlInput.trim()) {
-      editor.chain().focus().setImage({ src: urlInput.trim() }).run();
+      editor
+        .chain()
+        .focus()
+        .setImage({
+          src: urlInput.trim(),
+          width: imageWidth,
+          align: imageAlign,
+        } as any)
+        .run();
       setImageDialogOpen(false);
       setUrlInput("");
+      setImageWidth("100%");
+      setImageAlign("center");
     }
   };
   const searchUnsplash = async () => {
@@ -231,6 +264,8 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
         photographer: image.photographer,
         photographerUrl: image.photographerUrl,
         alt: image.description || "Unsplash image",
+        width: imageWidth,
+        align: imageAlign,
       })
       .run();
     setImageDialogOpen(false);
@@ -238,6 +273,8 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
     setUnsplashImages([]);
     setUnsplashPage(1);
     setHasMoreImages(false);
+    setImageWidth("100%");
+    setImageAlign("center");
   };
   const addImage = () => {
     setImageDialogOpen(true);
@@ -529,6 +566,16 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           type="button"
           variant="ghost"
           size="sm"
+          onClick={() => editor.chain().focus().setHardBreak().run()}
+          title="Line Break (or press Shift+Enter)"
+        >
+          {" "}
+          <CornerDownLeft className="w-4 h-4" />{" "}
+        </Button>{" "}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
           onClick={() =>
             editor.chain().focus().clearNodes().unsetAllMarks().run()
           }
@@ -537,7 +584,13 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           <RemoveFormatting className="w-4 h-4" />{" "}
         </Button>{" "}
       </div>{" "}
-      {/* Editor */} <EditorContent editor={editor} />{" "}
+      {/* Editor */}{" "}
+      <div className="relative">
+        <EditorContent editor={editor} />
+        <div className="absolute bottom-2 right-2 text-xs text-muted-foreground bg-background/80 px-2 py-1 rounded">
+          Tip: Press Shift+Enter for line breaks
+        </div>
+      </div>{" "}
       {/* Image Upload Dialog */}{" "}
       <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
         {" "}
@@ -551,6 +604,37 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
               Upload from your computer, paste a URL, or search free images{" "}
             </DialogDescription>{" "}
           </DialogHeader>{" "}
+          {/* Image Size and Position Controls */}
+          <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+            <div className="space-y-2">
+              <Label>Image Size</Label>
+              <select
+                value={imageWidth}
+                onChange={(e) => setImageWidth(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md bg-background"
+              >
+                <option value="100%">Full Width</option>
+                <option value="large">Large (384px)</option>
+                <option value="medium">Medium (256px)</option>
+                <option value="small">Small (192px)</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label>Position</Label>
+              <select
+                value={imageAlign}
+                onChange={(e) => setImageAlign(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md bg-background"
+              >
+                <option value="center">Center</option>
+                <option value="left">Left (text wraps right)</option>
+                <option value="right">Right (text wraps left)</option>
+              </select>
+              <p className="text-xs text-muted-foreground">
+                Left/Right allows text to flow around the image
+              </p>
+            </div>
+          </div>
           <Tabs defaultValue="upload" className="w-full">
             {" "}
             <TabsList className="grid w-full grid-cols-3">

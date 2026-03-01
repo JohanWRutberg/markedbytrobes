@@ -6,19 +6,21 @@ import { requireAuth } from "@/lib/auth-utils";
 const commentSchema = z.object({
   postId: z.string(),
   content: z.string().min(1).max(1000),
+  parentId: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const user = await requireAuth();
     const body = await request.json();
-    const { postId, content } = commentSchema.parse(body);
+    const { postId, content, parentId } = commentSchema.parse(body);
 
     const comment = await prisma.comment.create({
       data: {
         content,
         postId,
         userId: user.id,
+        parentId,
       },
       include: {
         user: {
