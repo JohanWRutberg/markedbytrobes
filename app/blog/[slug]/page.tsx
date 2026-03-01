@@ -150,13 +150,13 @@ export default async function PostPage({ params }: PostPageProps) {
           {/* Post Header */}
           <header className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <span className="px-3 py-1 bg-navy/10 dark:bg-cream/10 text-navy dark:text-cream rounded-full text-sm font-semibold">
+              <span className="px-3 py-1 bg-navy/10 dark:bg-cream/20 text-navy dark:text-cream rounded-full text-sm font-semibold">
                 {categoryLabels[post.category]}
               </span>
               {post.tags.map((tag) => (
                 <span
                   key={tag.id}
-                  className="px-3 py-1 bg-cream dark:bg-navy/50 text-navy dark:text-cream rounded-full text-sm"
+                  className="px-3 py-1 bg-cream/80 dark:bg-cream/20 text-navy dark:text-cream rounded-full text-sm"
                 >
                   <Tag className="w-3 h-3 inline mr-1" />
                   {tag.name}

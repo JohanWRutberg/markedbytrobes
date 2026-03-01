@@ -104,4 +104,51 @@
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--muted-foreground) / 0.3) hsl(var(--background));
   }
+
+  /* Blog Post Content Styling */
+  .prose {
+    color: hsl(var(--foreground));
+  }
+
+  .prose p,
+  .prose li,
+  .prose td,
+  .prose th,
+  .prose blockquote,
+  .prose code,
+  .prose pre {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .prose strong {
+    color: hsl(var(--foreground)) !important;
+    font-weight: 700;
+  }
+
+  .prose a {
+    color: #3b82f6 !important;
+  }
+
+  .dark .prose a {
+    color: #60a5fa !important;
+  }
+
+  /* Amazon Button in blog content */
+  .prose a[href*="amazon"] {
+    background-color: #ff9900 !important;
+    color: white !important;
+  }
+
+  .prose a[href*="amazon"]:hover {
+    background-color: #e68a00 !important;
+  }
 }
