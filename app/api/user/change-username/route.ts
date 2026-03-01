@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: "Ej autentiserad" }, { status: 401 });
     }
 
@@ -20,9 +20,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // Update user in database
+    // Update user in database using email to find user
     await prisma.user.update({
-      where: { id: session.user.id },
+      where: { email: session.user.email },
       data: { name: newUsername.trim() },
     });
 
