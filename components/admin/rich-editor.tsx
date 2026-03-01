@@ -164,15 +164,14 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
         throw new Error(error.error || "Upload failed");
       }
       const data = await response.json();
-      editor
-        .chain()
-        .focus()
-        .setImage({
+      editor.commands.insertContent({
+        type: "image",
+        attrs: {
           src: data.url,
           width: imageWidth,
           align: imageAlign,
-        } as any)
-        .run();
+        },
+      });
       setImageDialogOpen(false);
       setImageWidth("100%");
       setImageAlign("center");
@@ -189,15 +188,14 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
   };
   const handleUrlSubmit = () => {
     if (urlInput.trim()) {
-      editor
-        .chain()
-        .focus()
-        .setImage({
+      editor.commands.insertContent({
+        type: "image",
+        attrs: {
           src: urlInput.trim(),
           width: imageWidth,
           align: imageAlign,
-        } as any)
-        .run();
+        },
+      });
       setImageDialogOpen(false);
       setUrlInput("");
       setImageWidth("100%");
@@ -740,6 +738,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                     onClick={() => selectUnsplashImage(img)}
                   >
                     {" "}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={img.thumb}
                       alt={img.description || "Unsplash image"}
