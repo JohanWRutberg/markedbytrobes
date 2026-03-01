@@ -9,6 +9,7 @@ import { BookCard } from "@/components/post/book-card";
 import { RatingWidget } from "@/components/post/rating-widget";
 import { CommentSection } from "@/components/post/comment-section";
 import { ViewTracker } from "@/components/post/view-tracker";
+import { BlogContent } from "@/components/post/blog-content";
 import { formatDate, readingTime } from "@/lib/text-utils";
 import { AFFILIATE_DISCLOSURE_SHORT } from "@/lib/affiliate";
 
@@ -188,11 +189,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </header>
 
           {/* Post Content */}
-          <div
-            className="prose prose-lg dark:prose-invert max-w-none mb-12"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-            suppressHydrationWarning
-          />
+          <BlogContent content={post.content} />
 
           {/* Book Cards */}
           {post.books.length > 0 && (

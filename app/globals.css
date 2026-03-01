@@ -105,31 +105,51 @@
     scrollbar-color: hsl(var(--muted-foreground) / 0.3) hsl(var(--background));
   }
 
-  /* Blog Post Content Styling */
+  /* Blog Post Content Styling - Force override inline styles */
   .prose {
-    color: hsl(var(--foreground));
+    color: hsl(var(--foreground)) !important;
   }
 
   .prose p,
+  .prose p[style],
   .prose li,
+  .prose li[style],
   .prose td,
+  .prose td[style],
   .prose th,
+  .prose th[style],
   .prose blockquote,
+  .prose blockquote[style],
   .prose code,
-  .prose pre {
+  .prose code[style],
+  .prose pre,
+  .prose pre[style],
+  .prose div,
+  .prose div[style],
+  .prose span,
+  .prose span[style] {
     color: hsl(var(--foreground)) !important;
   }
 
   .prose h1,
+  .prose h1[style],
   .prose h2,
+  .prose h2[style],
   .prose h3,
+  .prose h3[style],
   .prose h4,
+  .prose h4[style],
   .prose h5,
-  .prose h6 {
+  .prose h5[style],
+  .prose h6,
+  .prose h6[style] {
     color: hsl(var(--foreground)) !important;
   }
 
-  .prose strong {
+  .prose strong,
+  .prose strong[style],
+  .prose b,
+  .prose b[style] {
     color: hsl(var(--foreground)) !important;
     font-weight: 700;
   }
@@ -150,5 +170,16 @@
 
   .prose a[href*="amazon"]:hover {
     background-color: #e68a00 !important;
+  }
+
+  /* Additional specificity for elements with color attribute */
+  .prose *[color],
+  .prose *[style*="color"] {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .dark .prose *[color],
+  .dark .prose *[style*="color"] {
+    color: hsl(var(--foreground)) !important;
   }
 }
