@@ -1,9 +1,16 @@
 export const CATEGORIES = [
   { value: "ROMANCE", label: "Romance" },
-  { value: "SELF_DEVELOPMENT", label: "Self Development" },
+  { value: "ROMANTASY", label: "Romantasy" },
+  { value: "FANTASY", label: "Fantasy" },
+  { value: "DARK_ROMANCE", label: "Dark Romance" },
   { value: "THRILLER", label: "Thriller" },
-  { value: "BOOK_LISTS", label: "Book Lists" },
-  { value: "SEASONAL_READS", label: "Seasonal Reads" },
+  { value: "BOOK_LISTS", label: "Book lists" },
+  { value: "SEASONAL_READS", label: "Seasonal reads" },
+  { value: "FICTION", label: "Fiction" },
+  { value: "HISTORICAL_FICTION", label: "Historical-fiction" },
+  { value: "CONTEMPORARY", label: "Contemporary" },
+  { value: "HISTORICAL", label: "Historical" },
+  { value: "SPORTS_ROMANCE", label: "Sports-romance" },
 ] as const;
 
 export const POSTS_PER_PAGE = 8;

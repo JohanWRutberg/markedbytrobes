@@ -101,10 +101,17 @@ export default async function PostPage({ params }: PostPageProps) {
 
   const categoryLabels: Record<string, string> = {
     ROMANCE: "Romance",
-    SELF_DEVELOPMENT: "Self Development",
+    ROMANTASY: "Romantasy",
+    FANTASY: "Fantasy",
+    DARK_ROMANCE: "Dark Romance",
     THRILLER: "Thriller",
-    BOOK_LISTS: "Book Lists",
-    SEASONAL_READS: "Seasonal Reads",
+    BOOK_LISTS: "Book lists",
+    SEASONAL_READS: "Seasonal reads",
+    FICTION: "Fiction",
+    HISTORICAL_FICTION: "Historical-fiction",
+    CONTEMPORARY: "Contemporary",
+    HISTORICAL: "Historical",
+    SPORTS_ROMANCE: "Sports-romance",
   };
 
   return (
