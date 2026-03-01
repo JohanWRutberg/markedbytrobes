@@ -15,6 +15,11 @@ export const metadata = {
   title: "Marked by Trobes - Book Reviews & Recommendations",
   description:
     "Discovering books that leave their mark. Book reviews and recommendations for passionate readers.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

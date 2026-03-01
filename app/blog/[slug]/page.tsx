@@ -97,11 +97,15 @@ export default async function PostPage({ params }: PostPageProps) {
       ? allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length
       : 0;
 
-  // Increment view count
-  await prisma.post.update({
-    where: { id: post.id },
-    data: { views: { increment: 1 } },
-  });
+  // Increment view count (fire and forget to avoid blocking)
+  prisma.post
+    .update({
+      where: { id: post.id },
+      data: { views: { increment: 1 } },
+    })
+    .catch(() => {
+      // Silently fail if view count update fails
+    });
 
   const categoryLabels: Record<string, string> = {
     ROMANCE: "Romance",
@@ -193,6 +197,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <div
             className="prose prose-lg dark:prose-invert max-w-none mb-12"
             dangerouslySetInnerHTML={{ __html: post.content }}
+            suppressHydrationWarning
           />
 
           {/* Book Cards */}
