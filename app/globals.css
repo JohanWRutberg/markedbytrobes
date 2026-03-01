@@ -115,6 +115,20 @@
     scrollbar-color: hsl(var(--muted-foreground) / 0.3) hsl(var(--background));
   }
 
+  /* Amazon Button Component Styling */
+  .amazon-button-style {
+    background-color: var(--amazon-bg);
+    color: var(--amazon-text);
+    border: 1px solid var(--amazon-border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+  }
+
+  .amazon-button-style:hover {
+    opacity: 0.9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  }
+
   /* Blog Post Content Styling - Force override inline styles */
   .prose {
     color: hsl(var(--foreground)) !important;

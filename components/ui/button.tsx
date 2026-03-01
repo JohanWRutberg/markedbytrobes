@@ -18,8 +18,7 @@ const buttonVariants = cva(
           "bg-cream text-navy shadow-sm hover:bg-cream/80 dark:bg-navy/50 dark:text-cream dark:hover:bg-navy/70",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-navy underline-offset-4 hover:underline dark:text-cream",
-        amazon:
-          "bg-[var(--amazon-bg)] text-[var(--amazon-text)] border border-[var(--amazon-border)] shadow-[0_1px_3px_rgba(0,0,0,0.1)] hover:opacity-90 hover:shadow-[0_2px_4px_rgba(0,0,0,0.15)] font-medium w-full md:w-auto",
+        amazon: "amazon-button-style font-medium w-full md:w-auto",
       },
       size: {
         default: "h-9 px-4 py-2",
