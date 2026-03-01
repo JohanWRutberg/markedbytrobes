@@ -53,6 +53,38 @@ export const UnsplashImage = Node.create<UnsplashImageOptions>({
     return [
       {
         tag: "figure[data-unsplash-image]",
+        getAttrs: (node) => {
+          if (typeof node === "string") return false;
+          const img = node.querySelector("img");
+          if (!img) return false;
+
+          // Extract width from img class
+          let width = "100%";
+          const imgClasses = img.className;
+          if (imgClasses.includes("w-40")) width = "x-small";
+          else if (imgClasses.includes("w-64")) width = "small";
+          else if (imgClasses.includes("w-96")) width = "medium";
+          else if (imgClasses.includes("w-[512px]")) width = "large";
+          else if (imgClasses.includes("w-[700px]")) width = "x-large";
+
+          // Extract align from figure class
+          let align = "center";
+          const figureClasses = node.className;
+          if (figureClasses.includes("float-left")) align = "left";
+          else if (figureClasses.includes("float-right")) align = "right";
+
+          return {
+            src: img.getAttribute("src"),
+            alt: img.getAttribute("alt"),
+            photographer:
+              node.querySelector("figcaption a")?.textContent || "Unknown",
+            photographerUrl:
+              node.querySelector("figcaption a")?.getAttribute("href") ||
+              "https://unsplash.com",
+            width,
+            align,
+          };
+        },
       },
     ];
   },
@@ -70,15 +102,15 @@ export const UnsplashImage = Node.create<UnsplashImageOptions>({
     const getWidthClass = () => {
       switch (width) {
         case "x-small":
-          return "w-32";
+          return "w-40"; // 160px
         case "small":
-          return "w-48";
+          return "w-64"; // 256px
         case "medium":
-          return "w-64";
+          return "w-96"; // 384px
         case "large":
-          return "w-96";
+          return "w-[512px]"; // 512px
         case "x-large":
-          return "w-[512px]";
+          return "w-[700px]"; // 700px - almost full width
         case "100%":
           return "w-full";
         default:
@@ -91,11 +123,11 @@ export const UnsplashImage = Node.create<UnsplashImageOptions>({
       imgClass += "w-full";
       captionClass += "text-center";
     } else if (align === "left") {
-      figureClass += "float-left mr-4 mb-4 inline-block";
+      figureClass += "float-left mr-6 mb-6 inline-block";
       imgClass += getWidthClass();
       captionClass += "text-left";
     } else if (align === "right") {
-      figureClass += "float-right ml-4 mb-4 inline-block";
+      figureClass += "float-right ml-6 mb-6 inline-block";
       imgClass += getWidthClass();
       captionClass += "text-right";
     } else {

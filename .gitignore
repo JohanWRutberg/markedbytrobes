@@ -38,3 +38,7 @@ next-env.d.ts
 
 # docker
 /data
+
+# markdown files (except README)
+*.md
+!README.md

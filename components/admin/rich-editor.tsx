@@ -676,7 +676,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                   size="sm"
                   variant="ghost"
                   onClick={() => updateImageSize("x-large")}
-                  title="X-Large (512px)"
+                  title="X-Large (700px)"
                   className="h-8 px-2"
                 >
                   XL
@@ -686,7 +686,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                   size="sm"
                   variant="ghost"
                   onClick={() => updateImageSize("large")}
-                  title="Large (384px)"
+                  title="Large (512px)"
                   className="h-8 px-2"
                 >
                   L
@@ -696,7 +696,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                   size="sm"
                   variant="ghost"
                   onClick={() => updateImageSize("medium")}
-                  title="Medium (256px)"
+                  title="Medium (384px)"
                   className="h-8 px-2"
                 >
                   M
@@ -706,7 +706,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                   size="sm"
                   variant="ghost"
                   onClick={() => updateImageSize("small")}
-                  title="Small (192px)"
+                  title="Small (256px)"
                   className="h-8 px-2"
                 >
                   S
@@ -716,7 +716,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                   size="sm"
                   variant="ghost"
                   onClick={() => updateImageSize("x-small")}
-                  title="X-Small (128px)"
+                  title="X-Small (160px)"
                   className="h-8 px-2"
                 >
                   XS
@@ -785,11 +785,11 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
                 className="w-full px-3 py-2 border rounded-md bg-background"
               >
                 <option value="100%">Full Width</option>
-                <option value="x-large">X-Large (512px)</option>
-                <option value="large">Large (384px)</option>
-                <option value="medium">Medium (256px)</option>
-                <option value="small">Small (192px)</option>
-                <option value="x-small">X-Small (128px)</option>
+                <option value="x-large">X-Large (700px)</option>
+                <option value="large">Large (512px)</option>
+                <option value="medium">Medium (384px)</option>
+                <option value="small">Small (256px)</option>
+                <option value="x-small">X-Small (160px)</option>
               </select>
             </div>
             <div className="space-y-2">

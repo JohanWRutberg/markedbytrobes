@@ -198,14 +198,14 @@
 
   .prose span[data-image-wrapper].float-left {
     float: left;
-    margin-right: 1rem;
-    margin-bottom: 1rem;
+    margin-right: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .prose span[data-image-wrapper].float-right {
     float: right;
-    margin-left: 1rem;
-    margin-bottom: 1rem;
+    margin-left: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   /* Unsplash image figure styles for floating */

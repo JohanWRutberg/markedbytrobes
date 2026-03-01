@@ -83,15 +83,15 @@ export const EnhancedImage = Image.extend<EnhancedImageOptions>({
     const getWidthClass = () => {
       switch (width) {
         case "x-small":
-          return "w-32";
+          return "w-40"; // 160px
         case "small":
-          return "w-48";
+          return "w-64"; // 256px
         case "medium":
-          return "w-64";
+          return "w-96"; // 384px
         case "large":
-          return "w-96";
+          return "w-[512px]"; // 512px
         case "x-large":
-          return "w-[512px]";
+          return "w-[700px]"; // 700px - almost full width
         case "100%":
           return "w-full";
         default:
@@ -103,10 +103,10 @@ export const EnhancedImage = Image.extend<EnhancedImageOptions>({
       wrapperClass += "flex justify-center";
       imgClass += "w-full";
     } else if (align === "left") {
-      wrapperClass += "float-left mr-4 mb-4";
+      wrapperClass += "float-left mr-6 mb-6";
       imgClass += getWidthClass();
     } else if (align === "right") {
-      wrapperClass += "float-right ml-4 mb-4";
+      wrapperClass += "float-right ml-6 mb-6";
       imgClass += getWidthClass();
     } else {
       wrapperClass += "flex justify-center";
