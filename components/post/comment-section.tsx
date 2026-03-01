@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 import { formatDate } from "@/lib/text-utils";
 import { User, Trash2 } from "lucide-react";
 
@@ -33,6 +35,16 @@ export function CommentSection({
   const [comments, setComments] = useState(initialComments);
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{
+    open: boolean;
+    commentId: string;
+    commentUser: string;
+  }>({ open: false, commentId: "", commentUser: "" });
+  const [errorAlert, setErrorAlert] = useState<{
+    open: boolean;
+    message: string;
+  }>({ open: false, message: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +70,14 @@ export function CommentSection({
     }
   };
 
-  const handleDelete = async (commentId: string) => {
+  const handleDeleteClick = (commentId: string, commentUser: string) => {
+    setConfirmDelete({ open: true, commentId, commentUser });
+  };
+
+  const handleDeleteConfirm = async () => {
+    const { commentId } = confirmDelete;
+    setDeletingId(commentId);
+
     try {
       const response = await fetch(`/api/comments/${commentId}`, {
         method: "DELETE",
@@ -66,9 +85,17 @@ export function CommentSection({
 
       if (response.ok) {
         setComments(comments.filter((c) => c.id !== commentId));
+      } else {
+        throw new Error("Failed to delete comment");
       }
     } catch (error) {
       console.error("Failed to delete comment:", error);
+      setErrorAlert({
+        open: true,
+        message: "Failed to delete comment. Please try again.",
+      });
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -125,21 +152,49 @@ export function CommentSection({
                     <p className="text-muted-foreground">{comment.content}</p>
                   </div>
                 </div>
-                {session?.user.id === comment.user.id && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(comment.id)}
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                )}
+                {session &&
+                  (session.user.id === comment.user.id ||
+                    session.user.role === "ADMIN") && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() =>
+                        handleDeleteClick(
+                          comment.id,
+                          comment.user.name || "Anonymous",
+                        )
+                      }
+                      className="text-red-600 hover:text-red-700"
+                      disabled={deletingId === comment.id}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  )}
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      <ConfirmDialog
+        open={confirmDelete.open}
+        onOpenChange={(open) => setConfirmDelete({ ...confirmDelete, open })}
+        title="Delete Comment"
+        description={`Are you sure you want to delete ${confirmDelete.commentUser}'s comment? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+        onConfirm={handleDeleteConfirm}
+        loading={deletingId !== null}
+      />
+
+      <AlertDialog
+        open={errorAlert.open}
+        onOpenChange={(open) => setErrorAlert({ ...errorAlert, open })}
+        title="Error"
+        description={errorAlert.message}
+        type="error"
+      />
     </div>
   );
 }
