@@ -108,7 +108,7 @@ export default async function PostPage({ params }: PostPageProps) {
   };
 
   return (
-    <article className="py-12">
+    <article className="py-12" suppressHydrationWarning>
       {/* Track view on client side */}
       <ViewTracker postId={post.id} />
 

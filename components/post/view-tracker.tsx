@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 
 interface ViewTrackerProps {
@@ -8,15 +8,23 @@ interface ViewTrackerProps {
 }
 
 export function ViewTracker({ postId }: ViewTrackerProps) {
-  useEffect(() => {
-    const trackView = async () => {
-      // Check if user has already viewed this post in the last 24 hours
-      const viewedPosts = Cookies.get("viewed_posts");
-      const viewedPostsArray = viewedPosts ? JSON.parse(viewedPosts) : [];
+  const [mounted, setMounted] = useState(false);
 
-      if (!viewedPostsArray.includes(postId)) {
-        // Track the view
-        try {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    const trackView = async () => {
+      try {
+        // Check if user has already viewed this post in the last 24 hours
+        const viewedPosts = Cookies.get("viewed_posts");
+        const viewedPostsArray = viewedPosts ? JSON.parse(viewedPosts) : [];
+
+        if (!viewedPostsArray.includes(postId)) {
+          // Track the view
           await fetch("/api/posts/track-view", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -28,14 +36,14 @@ export function ViewTracker({ postId }: ViewTrackerProps) {
           Cookies.set("viewed_posts", JSON.stringify(viewedPostsArray), {
             expires: 1, // 1 day
           });
-        } catch (error) {
-          console.error("Failed to track view:", error);
         }
+      } catch (error) {
+        console.error("Failed to track view:", error);
       }
     };
 
     trackView();
-  }, [postId]);
+  }, [postId, mounted]);
 
   return null;
 }
