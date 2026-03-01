@@ -348,7 +348,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Change Email */}
-        <Card className="md:col-span-2">
+        <Card>
           <CardHeader>
             <CardTitle>Byt e-postadress</CardTitle>
             <CardDescription>
@@ -356,7 +356,7 @@ export default function ProfilePage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleEmailChange} className="space-y-4 max-w-md">
+            <form onSubmit={handleEmailChange} className="space-y-4">
               <div>
                 <Label htmlFor="new-email">Ny e-postadress</Label>
                 <Input
