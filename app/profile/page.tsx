@@ -321,7 +321,9 @@ export default function ProfilePage() {
           <CardHeader>
             <CardTitle>Profilbild</CardTitle>
             <CardDescription>
-              Ladda upp en profilbild eller använd din bild från Google
+              {isOAuthOnly
+                ? "Din profilbild hämtas från ditt Google-konto"
+                : "Ladda upp en egen profilbild"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -335,41 +337,51 @@ export default function ProfilePage() {
                   {getInitials(session.user.name)}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1">
-                <Label
-                  htmlFor="profile-image"
-                  className="cursor-pointer inline-block"
-                >
-                  <div
-                    className={`flex items-center gap-2 px-4 py-2 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors ${
-                      uploadingImage ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
+              {!isOAuthOnly ? (
+                <div className="flex-1">
+                  <Label
+                    htmlFor="profile-image"
+                    className="cursor-pointer inline-block"
                   >
-                    {uploadingImage ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Laddar upp...
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="w-4 h-4" />
-                        Välj ny bild
-                      </>
-                    )}
-                  </div>
-                  <Input
-                    id="profile-image"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={uploadingImage}
-                    className="hidden"
-                  />
-                </Label>
-                <p className="text-xs text-muted-foreground mt-2">
-                  JPG, PNG eller GIF. Max 5MB.
-                </p>
-              </div>
+                    <div
+                      className={`flex items-center gap-2 px-4 py-2 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors ${
+                        uploadingImage ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                    >
+                      {uploadingImage ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Laddar upp...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-4 h-4" />
+                          Välj ny bild
+                        </>
+                      )}
+                    </div>
+                    <Input
+                      id="profile-image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploadingImage}
+                      className="hidden"
+                    />
+                  </Label>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    JPG, PNG eller GIF. Max 5MB.
+                  </p>
+                </div>
+              ) : (
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground">
+                    Din profilbild synkroniseras automatiskt med ditt
+                    Google-konto. För att ändra den, uppdatera din profilbild i
+                    Google.
+                  </p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
