@@ -38,6 +38,11 @@ export default function ProfilePage() {
     password: "",
   });
 
+  // Username change state
+  const [usernameData, setUsernameData] = useState({
+    newUsername: "",
+  });
+
   if (!session) {
     router.push("/auth/signin");
     return null;
@@ -90,6 +95,54 @@ export default function ProfilePage() {
         setMessage({
           type: "error",
           text: data.error || "Kunde inte ändra lösenord",
+        });
+      }
+    } catch {
+      setMessage({
+        type: "error",
+        text: "Ett fel uppstod",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUsernameChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage(null);
+
+    if (!usernameData.newUsername.trim()) {
+      setMessage({
+        type: "error",
+        text: "Användarnamnet kan inte vara tomt",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("/api/user/change-username", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(usernameData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({
+          type: "success",
+          text: "Användarnamnet har ändrats",
+        });
+        setUsernameData({
+          newUsername: "",
+        });
+        // Update session with new username
+        await update();
+      } else {
+        setMessage({
+          type: "error",
+          text: data.error || "Kunde inte ändra användarnamn",
         });
       }
     } catch {
@@ -195,6 +248,37 @@ export default function ProfilePage() {
               <Label className="text-sm text-muted-foreground">Roll</Label>
               <p className="font-semibold">{session.user.role}</p>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Change Username */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Byt användarnamn</CardTitle>
+            <CardDescription>Ändra ditt visningsnamn</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleUsernameChange} className="space-y-4">
+              <div>
+                <Label htmlFor="new-username">Nytt användarnamn</Label>
+                <Input
+                  id="new-username"
+                  type="text"
+                  value={usernameData.newUsername}
+                  onChange={(e) =>
+                    setUsernameData({
+                      newUsername: e.target.value,
+                    })
+                  }
+                  placeholder={session.user.name || "Ange användarnamn"}
+                  required
+                />
+              </div>
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Byt användarnamn
+              </Button>
+            </form>
           </CardContent>
         </Card>
 
