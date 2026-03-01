@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         .end(buffer);
     });
 
-    const imageUrl = (uploadResponse as any).secure_url;
+    const imageUrl = (uploadResponse as { secure_url: string }).secure_url;
 
     // Update user in database
     await prisma.user.update({
