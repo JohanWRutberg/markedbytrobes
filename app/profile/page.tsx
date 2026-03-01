@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import imageCompression from "browser-image-compression";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -249,21 +250,22 @@ export default function ProfilePage() {
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setMessage({
-        type: "error",
-        text: "Bilden får inte vara större än 5MB",
-      });
-      return;
-    }
-
     setUploadingImage(true);
     setMessage(null);
 
     try {
+      // Compress image before upload
+      const options = {
+        maxSizeMB: 1, // Max 1MB after compression
+        maxWidthOrHeight: 800, // Max dimension
+        useWebWorker: true,
+        fileType: file.type,
+      };
+
+      const compressedFile = await imageCompression(file, options);
+
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("image", compressedFile);
 
       const response = await fetch("/api/user/upload-image", {
         method: "POST",
@@ -285,7 +287,8 @@ export default function ProfilePage() {
           text: data.error || "Kunde inte ladda upp bild",
         });
       }
-    } catch {
+    } catch (error) {
+      console.error("Upload error:", error);
       setMessage({
         type: "error",
         text: "Ett fel uppstod vid uppladdning",
@@ -370,7 +373,8 @@ export default function ProfilePage() {
                     />
                   </Label>
                   <p className="text-xs text-muted-foreground mt-2">
-                    JPG, PNG eller GIF. Max 5MB.
+                    JPG, PNG eller GIF. Bilden komprimeras automatiskt för
+                    optimal prestanda.
                   </p>
                 </div>
               ) : (

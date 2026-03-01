@@ -1,3 +1,9 @@
 {
-  "buildCommand": "prisma generate && prisma migrate deploy && next build"
+  "buildCommand": "prisma generate && prisma migrate deploy && next build",
+  "functions": {
+    "app/api/user/upload-image/route.ts": {
+      "maxDuration": 30,
+      "memory": 1024
+    }
+  }
 }
