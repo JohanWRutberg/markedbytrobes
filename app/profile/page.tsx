@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [isOAuthOnly, setIsOAuthOnly] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -54,6 +55,25 @@ export default function ProfilePage() {
   const [usernameData, setUsernameData] = useState({
     newUsername: "",
   });
+
+  // Check if user is OAuth only
+  useEffect(() => {
+    const checkAuthMethod = async () => {
+      try {
+        const response = await fetch("/api/user/auth-method");
+        if (response.ok) {
+          const data = await response.json();
+          setIsOAuthOnly(data.isOAuthOnly);
+        }
+      } catch (error) {
+        console.error("Error checking auth method:", error);
+      }
+    };
+
+    if (session) {
+      checkAuthMethod();
+    }
+  }, [session]);
 
   if (!session) {
     router.push("/auth/signin");
@@ -377,6 +397,19 @@ export default function ProfilePage() {
               <Label className="text-sm text-muted-foreground">Roll</Label>
               <p className="font-semibold">{session.user.role}</p>
             </div>
+            {isOAuthOnly && (
+              <div className="pt-2 border-t">
+                <Label className="text-sm text-muted-foreground">
+                  Inloggningsmetod
+                </Label>
+                <p className="font-semibold flex items-center gap-2">
+                  Google OAuth
+                  <span className="text-xs font-normal text-muted-foreground">
+                    (E-post och lösenord kan inte ändras)
+                  </span>
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -411,120 +444,126 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Change Password */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Byt lösenord</CardTitle>
-            <CardDescription>
-              Ändra ditt lösenord (minst 8 tecken)
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handlePasswordChange} className="space-y-4">
-              <div>
-                <Label htmlFor="current-password">Nuvarande lösenord</Label>
-                <Input
-                  id="current-password"
-                  type="password"
-                  value={passwordData.currentPassword}
-                  onChange={(e) =>
-                    setPasswordData((prev) => ({
-                      ...prev,
-                      currentPassword: e.target.value,
-                    }))
-                  }
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-password">Nytt lösenord</Label>
-                <Input
-                  id="new-password"
-                  type="password"
-                  value={passwordData.newPassword}
-                  onChange={(e) =>
-                    setPasswordData((prev) => ({
-                      ...prev,
-                      newPassword: e.target.value,
-                    }))
-                  }
-                  required
-                  minLength={8}
-                />
-              </div>
-              <div>
-                <Label htmlFor="confirm-password">Bekräfta nytt lösenord</Label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  value={passwordData.confirmPassword}
-                  onChange={(e) =>
-                    setPasswordData((prev) => ({
-                      ...prev,
-                      confirmPassword: e.target.value,
-                    }))
-                  }
-                  required
-                  minLength={8}
-                />
-              </div>
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Byt lösenord
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        {/* Change Password - Only for credentials users */}
+        {!isOAuthOnly && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Byt lösenord</CardTitle>
+              <CardDescription>
+                Ändra ditt lösenord (minst 8 tecken)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handlePasswordChange} className="space-y-4">
+                <div>
+                  <Label htmlFor="current-password">Nuvarande lösenord</Label>
+                  <Input
+                    id="current-password"
+                    type="password"
+                    value={passwordData.currentPassword}
+                    onChange={(e) =>
+                      setPasswordData((prev) => ({
+                        ...prev,
+                        currentPassword: e.target.value,
+                      }))
+                    }
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="new-password">Nytt lösenord</Label>
+                  <Input
+                    id="new-password"
+                    type="password"
+                    value={passwordData.newPassword}
+                    onChange={(e) =>
+                      setPasswordData((prev) => ({
+                        ...prev,
+                        newPassword: e.target.value,
+                      }))
+                    }
+                    required
+                    minLength={8}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="confirm-password">
+                    Bekräfta nytt lösenord
+                  </Label>
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    value={passwordData.confirmPassword}
+                    onChange={(e) =>
+                      setPasswordData((prev) => ({
+                        ...prev,
+                        confirmPassword: e.target.value,
+                      }))
+                    }
+                    required
+                    minLength={8}
+                  />
+                </div>
+                <Button type="submit" disabled={loading} className="w-full">
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Byt lösenord
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        )}
 
-        {/* Change Email */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Byt e-postadress</CardTitle>
-            <CardDescription>
-              Ändra din e-postadress (kräver ditt lösenord för säkerhet)
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleEmailChange} className="space-y-4">
-              <div>
-                <Label htmlFor="new-email">Ny e-postadress</Label>
-                <Input
-                  id="new-email"
-                  type="email"
-                  value={emailData.newEmail}
-                  onChange={(e) =>
-                    setEmailData((prev) => ({
-                      ...prev,
-                      newEmail: e.target.value,
-                    }))
-                  }
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="email-password">
-                  Bekräfta med ditt lösenord
-                </Label>
-                <Input
-                  id="email-password"
-                  type="password"
-                  value={emailData.password}
-                  onChange={(e) =>
-                    setEmailData((prev) => ({
-                      ...prev,
-                      password: e.target.value,
-                    }))
-                  }
-                  required
-                />
-              </div>
-              <Button type="submit" disabled={loading} className="w-full">
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Byt e-postadress
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        {/* Change Email - Only for credentials users */}
+        {!isOAuthOnly && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Byt e-postadress</CardTitle>
+              <CardDescription>
+                Ändra din e-postadress (kräver ditt lösenord för säkerhet)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleEmailChange} className="space-y-4">
+                <div>
+                  <Label htmlFor="new-email">Ny e-postadress</Label>
+                  <Input
+                    id="new-email"
+                    type="email"
+                    value={emailData.newEmail}
+                    onChange={(e) =>
+                      setEmailData((prev) => ({
+                        ...prev,
+                        newEmail: e.target.value,
+                      }))
+                    }
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email-password">
+                    Bekräfta med ditt lösenord
+                  </Label>
+                  <Input
+                    id="email-password"
+                    type="password"
+                    value={emailData.password}
+                    onChange={(e) =>
+                      setEmailData((prev) => ({
+                        ...prev,
+                        password: e.target.value,
+                      }))
+                    }
+                    required
+                  />
+                </div>
+                <Button type="submit" disabled={loading} className="w-full">
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Byt e-postadress
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
