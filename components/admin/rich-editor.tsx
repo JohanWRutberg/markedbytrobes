@@ -57,6 +57,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 interface RichEditorProps {
   content: string;
@@ -76,6 +77,10 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
   const [unsplashPage, setUnsplashPage] = useState(1);
   const [hasMoreImages, setHasMoreImages] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [errorAlert, setErrorAlert] = useState<{
+    open: boolean;
+    message: string;
+  }>({ open: false, message: "" });
   const [unsplashImages, setUnsplashImages] = useState<
     Array<{
       id: string;
@@ -150,7 +155,11 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
       setImageDialogOpen(false);
     } catch (error) {
       console.error("Upload error:", error);
-      alert(error instanceof Error ? error.message : "Failed to upload image");
+      setErrorAlert({
+        open: true,
+        message:
+          error instanceof Error ? error.message : "Failed to upload image",
+      });
     } finally {
       setUploading(false);
     }
@@ -178,7 +187,10 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
       setHasMoreImages(data.images.length === 12);
     } catch (error) {
       console.error("Search error:", error);
-      alert("Failed to search images");
+      setErrorAlert({
+        open: true,
+        message: "Failed to search images",
+      });
     } finally {
       setSearching(false);
     }
@@ -735,6 +747,13 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
           </div>
         </DialogContent>
       </Dialog>
+      <AlertDialog
+        open={errorAlert.open}
+        onOpenChange={(open) => setErrorAlert({ ...errorAlert, open })}
+        title="Error"
+        description={errorAlert.message}
+        type="error"
+      />
     </div>
   );
 }

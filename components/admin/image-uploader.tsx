@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Upload,
@@ -38,6 +39,10 @@ export function ImageUploader({
   const [urlInput, setUrlInput] = useState(value);
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
+  const [errorAlert, setErrorAlert] = useState<{
+    open: boolean;
+    message: string;
+  }>({ open: false, message: "" });
   const [unsplashImages, setUnsplashImages] = useState<
     Array<{
       id: string;
@@ -75,7 +80,11 @@ export function ImageUploader({
       setOpen(false);
     } catch (error) {
       console.error("Upload error:", error);
-      alert(error instanceof Error ? error.message : "Failed to upload image");
+      setErrorAlert({
+        open: true,
+        message:
+          error instanceof Error ? error.message : "Failed to upload image",
+      });
     } finally {
       setUploading(false);
     }
@@ -105,7 +114,10 @@ export function ImageUploader({
       setUnsplashImages(data.images);
     } catch (error) {
       console.error("Search error:", error);
-      alert("Failed to search images");
+      setErrorAlert({
+        open: true,
+        message: "Failed to search images",
+      });
     } finally {
       setSearching(false);
     }
@@ -260,6 +272,14 @@ export function ImageUploader({
           <Image src={value} alt="Preview" fill className="object-cover" />
         </div>
       )}
+
+      <AlertDialog
+        open={errorAlert.open}
+        onOpenChange={(open) => setErrorAlert({ ...errorAlert, open })}
+        title="Error"
+        description={errorAlert.message}
+        type="error"
+      />
     </div>
   );
 }

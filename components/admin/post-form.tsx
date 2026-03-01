@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 import { CATEGORIES } from "@/lib/constants";
 import { createSlug } from "@/lib/text-utils";
 import { PlusCircle, X } from "lucide-react";
@@ -41,6 +42,10 @@ interface PostFormProps {
 export function PostForm({ initialData, isEditing = false }: PostFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorAlert, setErrorAlert] = useState<{
+    open: boolean;
+    message: string;
+  }>({ open: false, message: "" });
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
     slug: initialData?.slug || "",
@@ -156,16 +161,21 @@ export function PostForm({ initialData, isEditing = false }: PostFormProps) {
         router.push(`/admin/posts`);
       } else {
         const error = await response.json();
-        alert(
-          error.error || `Failed to ${isEditing ? "update" : "create"} post`,
-        );
+        setErrorAlert({
+          open: true,
+          message:
+            error.error || `Failed to ${isEditing ? "update" : "create"} post`,
+        });
       }
     } catch (error) {
       console.error(
         `Error ${isEditing ? "updating" : "creating"} post:`,
         error,
       );
-      alert(`Failed to ${isEditing ? "update" : "create"} post`);
+      setErrorAlert({
+        open: true,
+        message: `Failed to ${isEditing ? "update" : "create"} post`,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -423,6 +433,14 @@ export function PostForm({ initialData, isEditing = false }: PostFormProps) {
           {isEditing ? "Update & Publish" : "Publish"}
         </Button>
       </div>
+
+      <AlertDialog
+        open={errorAlert.open}
+        onOpenChange={(open) => setErrorAlert({ ...errorAlert, open })}
+        title="Error"
+        description={errorAlert.message}
+        type="error"
+      />
     </form>
   );
 }
