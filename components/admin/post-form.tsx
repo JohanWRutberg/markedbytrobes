@@ -13,6 +13,7 @@ import { AlertDialog } from "@/components/ui/alert-dialog";
 import { CATEGORIES } from "@/lib/constants";
 import { createSlug } from "@/lib/text-utils";
 import { PlusCircle, X } from "lucide-react";
+import { useAutoSave } from "@/hooks/use-auto-save";
 
 interface PostFormProps {
   initialData?: {
@@ -42,6 +43,7 @@ interface PostFormProps {
 export function PostForm({ initialData, isEditing = false }: PostFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [postId, setPostId] = useState<string | undefined>(initialData?.id);
   const [errorAlert, setErrorAlert] = useState<{
     open: boolean;
     message: string;
@@ -74,6 +76,62 @@ export function PostForm({ initialData, isEditing = false }: PostFormProps) {
         whoFor: string;
         emotionalPoints: string[];
       }>),
+  });
+
+  // Auto-save function
+  const handleAutoSave = async (data: unknown) => {
+    const currentData = data as typeof formData;
+
+    // Don't auto-save if title or content is empty
+    if (!currentData.title.trim() || !currentData.content.trim()) {
+      return;
+    }
+
+    try {
+      if (postId) {
+        // Update existing post
+        const response = await fetch(`/api/admin/posts/${postId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...currentData,
+            published: false, // Auto-save always saves as draft
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to auto-save");
+        }
+      } else {
+        // Create new post (first auto-save)
+        const response = await fetch("/api/admin/posts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...currentData,
+            published: false, // Auto-save always saves as draft
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to auto-save");
+        }
+
+        const newPost = await response.json();
+        setPostId(newPost.id);
+      }
+    } catch (error) {
+      console.error("Auto-save error:", error);
+      throw error;
+    }
+  };
+
+  // Enable auto-save with 3 second delay
+  useAutoSave({
+    data: formData,
+    onSave: handleAutoSave,
+    delay: 3000,
+    enabled: true,
   });
 
   const [currentTag, setCurrentTag] = useState("");
@@ -142,10 +200,12 @@ export function PostForm({ initialData, isEditing = false }: PostFormProps) {
     setIsSubmitting(true);
 
     try {
-      const url = isEditing
-        ? `/api/admin/posts/${initialData?.id}`
+      // Use post ID if we have one (from auto-save or editing)
+      const usePostId = postId || initialData?.id;
+      const url = usePostId
+        ? `/api/admin/posts/${usePostId}`
         : "/api/admin/posts";
-      const method = isEditing ? "PUT" : "POST";
+      const method = usePostId ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
@@ -164,17 +224,17 @@ export function PostForm({ initialData, isEditing = false }: PostFormProps) {
         setErrorAlert({
           open: true,
           message:
-            error.error || `Failed to ${isEditing ? "update" : "create"} post`,
+            error.error || `Failed to ${usePostId ? "update" : "create"} post`,
         });
       }
     } catch (error) {
       console.error(
-        `Error ${isEditing ? "updating" : "creating"} post:`,
+        `Error ${postId || initialData?.id ? "updating" : "creating"} post:`,
         error,
       );
       setErrorAlert({
         open: true,
-        message: `Failed to ${isEditing ? "update" : "create"} post`,
+        message: `Failed to ${postId || initialData?.id ? "update" : "create"} post`,
       });
     } finally {
       setIsSubmitting(false);

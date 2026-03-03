@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
+import { useAutoSaveContext } from "@/contexts/auto-save-context";
 
 function getInitials(name: string | null | undefined): string {
   if (!name) return "U";
@@ -39,6 +40,22 @@ export function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { status } = useAutoSaveContext();
+
+  const getSaveStatusText = () => {
+    switch (status) {
+      case "saving":
+        return "Sparar...";
+      case "saved":
+        return "Sparat ✓";
+      case "error":
+        return "Sparfel!";
+      default:
+        return null;
+    }
+  };
+
+  const saveStatusText = getSaveStatusText();
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -73,6 +90,21 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
+
+            {/* Auto-save Status */}
+            {saveStatusText && (
+              <span
+                className={`text-sm font-medium ${
+                  status === "saving"
+                    ? "text-blue-600 dark:text-blue-400"
+                    : status === "saved"
+                      ? "text-green-600 dark:text-green-400"
+                      : "text-red-600 dark:text-red-400"
+                }`}
+              >
+                {saveStatusText}
+              </span>
+            )}
 
             {session?.user.role === "ADMIN" && (
               <Link
