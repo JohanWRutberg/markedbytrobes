@@ -77,20 +77,6 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:space-x-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`font-cinzel text-sm transition-colors hover:text-navy dark:hover:text-cream ${
-                  pathname === item.href
-                    ? "text-navy dark:text-cream font-semibold"
-                    : "text-muted-foreground"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-
             {/* Auto-save Status */}
             {saveStatusText && (
               <span
@@ -105,6 +91,20 @@ export function Navbar() {
                 {saveStatusText}
               </span>
             )}
+
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`font-cinzel text-sm transition-colors hover:text-navy dark:hover:text-cream ${
+                  pathname === item.href
+                    ? "text-navy dark:text-cream font-semibold"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
 
             {session?.user.role === "ADMIN" && (
               <Link
@@ -171,6 +171,20 @@ export function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center space-x-2 md:hidden">
+            {/* Auto-save Status (Mobile) */}
+            {saveStatusText && (
+              <span
+                className={`text-xs font-medium ${
+                  status === "saving"
+                    ? "text-blue-600 dark:text-blue-400"
+                    : status === "saved"
+                      ? "text-green-600 dark:text-green-400"
+                      : "text-red-600 dark:text-red-400"
+                }`}
+              >
+                {saveStatusText}
+              </span>
+            )}
             <ThemeToggle />
             <Button
               variant="ghost"
