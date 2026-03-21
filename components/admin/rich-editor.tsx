@@ -351,7 +351,7 @@ export function RichEditor({ content, onChange }: RichEditorProps) {
     <div className="border rounded-lg">
       {" "}
       {/* Toolbar */}{" "}
-      <div className="flex flex-wrap items-center gap-1 p-2 border-b bg-muted/50">
+      <div className="sticky top-16 z-40 flex flex-wrap items-center gap-1 p-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
         {" "}
         <Button
           type="button"
