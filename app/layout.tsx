@@ -1,4 +1,5 @@
 import { Cinzel } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/layout/navbar";
@@ -45,6 +46,7 @@ export default function RootLayout({
           </ThemeProvider>
         </Providers>
       </body>
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ""} />
     </html>
   );
 }

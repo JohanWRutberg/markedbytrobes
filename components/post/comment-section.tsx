@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { trackComment } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,11 +27,13 @@ interface Comment {
 
 interface CommentSectionProps {
   postId: string;
+  postSlug: string;
   comments: Comment[];
 }
 
 export function CommentSection({
   postId,
+  postSlug,
   comments: initialComments,
 }: CommentSectionProps) {
   const { data: session } = useSession();
@@ -96,6 +99,7 @@ export function CommentSection({
         const comment = await response.json();
         setComments([comment, ...comments]);
         setNewComment("");
+        trackComment(postSlug, false);
       }
     } catch (error) {
       console.error("Failed to submit comment:", error);
@@ -124,6 +128,7 @@ export function CommentSection({
         setComments([...comments, reply]);
         setReplyContent("");
         setReplyingTo(null);
+        trackComment(postSlug, true);
       }
     } catch (error) {
       console.error("Failed to submit reply:", error);

@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { trackRating } from "@/lib/analytics";
 
 interface RatingWidgetProps {
   postId: string;
+  postSlug: string;
   initialRating?: number;
   averageRating?: number;
   totalRatings?: number;
@@ -16,6 +18,7 @@ interface RatingWidgetProps {
 
 export function RatingWidget({
   postId,
+  postSlug,
   initialRating,
   averageRating: initialAverage = 0,
   totalRatings: initialTotal = 0,
@@ -40,7 +43,11 @@ export function RatingWidget({
 
       if (response.ok) {
         const oldRating = userRating;
+        const isUpdate = oldRating > 0;
         setUserRating(rating);
+
+        // Track rating in analytics
+        trackRating(postSlug, rating, isUpdate);
 
         // Recalculate average
         if (oldRating === 0) {

@@ -218,7 +218,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </header>
 
           {/* Post Content */}
-          <BlogContent content={post.content} />
+          <BlogContent content={post.content} postSlug={post.slug} />
 
           {/* Book Cards */}
           {post.books.length > 0 && (
@@ -239,6 +239,7 @@ export default async function PostPage({ params }: PostPageProps) {
             </h2>
             <RatingWidget
               postId={post.id}
+              postSlug={post.slug}
               initialRating={
                 Array.isArray(post.ratings) && post.ratings.length > 0
                   ? post.ratings[0].rating
@@ -260,7 +261,11 @@ export default async function PostPage({ params }: PostPageProps) {
 
           {/* Comments Section */}
           <div className="border-t pt-12">
-            <CommentSection postId={post.id} comments={post.comments} />
+            <CommentSection
+              postId={post.id}
+              postSlug={post.slug}
+              comments={post.comments}
+            />
           </div>
         </div>
       </div>

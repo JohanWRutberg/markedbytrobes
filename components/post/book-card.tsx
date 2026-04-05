@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AmazonIcon } from "@/components/ui/amazon-icon";
 import { createAmazonLink } from "@/lib/affiliate";
+import { trackAffiliateClick } from "@/lib/analytics";
 
 interface Book {
   id: string;
@@ -22,6 +23,10 @@ interface BookCardProps {
 }
 
 export function BookCard({ book }: BookCardProps) {
+  const handleAffiliateClick = () => {
+    trackAffiliateClick(book.title, book.author, book.amazonLink);
+  };
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all">
       <CardContent className="p-6">
@@ -87,6 +92,7 @@ export function BookCard({ book }: BookCardProps) {
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
                   className="group"
+                  onClick={handleAffiliateClick}
                 >
                   <AmazonIcon className="w-4 h-4" />
                   Get on Amazon
@@ -97,6 +103,7 @@ export function BookCard({ book }: BookCardProps) {
                   href={createAmazonLink(book.amazonLink)}
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
+                  onClick={handleAffiliateClick}
                 >
                   Check Price
                 </a>
