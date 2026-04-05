@@ -34,7 +34,7 @@ const shouldTrack = (): boolean => {
       if (userRole === "ADMIN") {
         return false;
       }
-    } catch (e) {
+    } catch {
       // SessionStorage not available, continue with tracking
     }
   }
