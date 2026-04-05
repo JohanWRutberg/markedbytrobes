@@ -28,6 +28,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "";
+  const isProduction = process.env.NODE_ENV === "production";
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${cinzel.variable} font-sans antialiased`}>
@@ -46,7 +49,7 @@ export default function RootLayout({
           </ThemeProvider>
         </Providers>
       </body>
-      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ""} />
+      {isProduction && gaId && <GoogleAnalytics gaId={gaId} />}
     </html>
   );
 }
